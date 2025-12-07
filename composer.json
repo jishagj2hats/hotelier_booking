@@ -1,0 +1,19 @@
+{
+    "name": "hotelier/hotelier-booking",
+    "type": "typo3-cms-extension",
+    "description": "Hotel room booking system",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "typo3/cms-core": "^14.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hotelier\\HotelierBooking\\": "Classes/"
+        }
+    },
+    "extra": {
+        "typo3/cms": {
+            "extension-key": "hotelier_booking"
+        }
+    }
+}

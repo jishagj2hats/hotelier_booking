@@ -1,0 +1,7 @@
+tt_content.tx_hotelierbooking_rooms =< lib.contentElement
+tt_content.tx_hotelierbooking_rooms {
+  header >
+}
+lib.contentElement {
+    header >
+}

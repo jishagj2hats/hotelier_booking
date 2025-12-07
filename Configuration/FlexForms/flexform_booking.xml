@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<T3DataStructure>
+    <sheets>
+        <sDEF>
+            <ROOT>
+                <sheetTitle>General Settings</sheetTitle>
+                <type>array</type>
+                <el>
+                    <!-- Items per page -->
+                    <settings.itemsPerPage>
+                        <label>LLL:EXT:news/Resources/Private/Language/locallang_be.xlf:itemsPerPage</label>
+                        <config>
+                            <type>number</type>
+                            <size>4</size>
+                            <default>4</default>
+                            <range>
+                                <lower>1</lower>
+                                <upper>100</upper>
+                            </range>
+                        </config>
+                    </settings.itemsPerPage>
+                    <settings.startingpoint>
+						<label>LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.startingpoint</label>
+						<config>
+							<type>group</type>
+							<allowed>pages</allowed>
+							<size>3</size>
+							<maxitems>50</maxitems>
+							<minitems>0</minitems>
+						</config>
+					</settings.startingpoint>
+                </el>
+            </ROOT>
+        </sDEF>
+    </sheets>
+</T3DataStructure>
+
+

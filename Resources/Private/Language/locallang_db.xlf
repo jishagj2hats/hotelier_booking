@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2014-06-02T11:48:25Z" product-name="hotelier-booking">
+		<header/>
+		<body>
+			<trans-unit id="tx_hotelierbooking_domain_model_category" xml:space="preserve">
+				<source>Category</source>
+			</trans-unit>
+            <trans-unit id="tx_hotelierbooking_domain_model_room" xml:space="preserve">
+				<source>Rooms</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

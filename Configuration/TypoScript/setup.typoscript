@@ -1,0 +1,20 @@
+plugin.tx_hotelierbooking_rooms.view {
+    templateRootPath = EXT:hotelier_booking/Resources/Private/Templates/
+    partialRootPath = EXT:hotelier_booking/Resources/Private/Partials/
+    layoutRootPath = EXT:hotelier_booking/Resources/Private/Layouts/
+}
+
+# Remove header from the specific plugin
+tt_content.list.20.hotelierbooking_rooms {
+    header >
+    subheader >
+    header_layout >
+}
+
+# Also remove from the content element wrapper
+tt_content.list.20.hotelierbooking_rooms.stdWrap.dataWrap >
+
+# Remove header rendering completely for this content type
+lib.contentElement.settings.header.defaultHeaderType = 0
+
+TCEFORM.tt_content.header.disabled = 1
