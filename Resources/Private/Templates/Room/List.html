@@ -61,10 +61,12 @@
                                 </p>
 
                                 <div class="d-flex justify-content-between">
-                                    <a class="btn btn-sm btn-dark rounded py-2 px-4"
-                                        href="{f:uri.action(action:'detail', arguments:{room: room})}">
+                                    <f:link.page pageUid="{site.settings.bookingPage}"
+                                        additionalParams="{room: room.uid}"
+                                        class="btn btn-sm btn-dark rounded py-2 px-4">
                                         Book Now
-                                    </a>
+                                    </f:link.page>
+
                                 </div>
 
                             </div>

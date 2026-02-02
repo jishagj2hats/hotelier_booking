@@ -1,8 +1,12 @@
-label: 'Booking'
-description: 'Settings for the Hotelier Booking extension'
 settings:
-  storagePid:
-    type: int
-    label: 'Storage Folder (PID)'
-    description: 'Select the folder where Rooms and Category records are stored'
+
+  bookingPage:
+    type: page
+    label: 'Booking Page'
+    description: 'Select the page where the booking form is displayed.'
+    default: 0
+  bookingPid:
+    type: page
+    label: 'Bookings Data'
+    description: 'Select the folder where the booking form data is stored.'
     default: 0

@@ -31,6 +31,14 @@ ExtensionManagementUtility::addPiFlexFormValue(
         $pluginSignature,
         'after:palette:headers'
     );
+    ExtensionUtility::registerPlugin(
+        'HotelierBooking',          
+        'Booking',                    
+        'Hotel Booking Form',     
+        'hotelier-booking-room',    
+        'Plugins',                  
+        'Booking form' 
+    );
 })();
 
 

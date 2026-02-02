@@ -3,6 +3,7 @@ defined('TYPO3') || die();
 
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 use Hotelier\HotelierBooking\Controller\RoomController;
+use Hotelier\HotelierBooking\Controller\BookingController;
 
 (function () {
     ExtensionUtility::configurePlugin(
@@ -13,6 +14,16 @@ use Hotelier\HotelierBooking\Controller\RoomController;
         ],
         [
             RoomController::class => 'filter'
+        ]
+    );
+    ExtensionUtility::configurePlugin(
+        'HotelierBooking',
+        'Booking',
+        [
+            BookingController::class => 'form, submit'
+        ],
+        [
+            BookingController::class => 'submit'
         ]
     );
 })();

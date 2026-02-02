@@ -27,7 +27,9 @@ class RoomController extends ActionController
     public function listAction(): \Psr\Http\Message\ResponseInterface
     {
         $rooms = $this->roomRepository->findAll();
-
+        $site = $this->request->getAttribute('site');
+        
+        $this->view->assign('site', $site);
         $this->view->assignMultiple([
             'rooms' => $rooms,
         ]);
@@ -45,7 +47,7 @@ class RoomController extends ActionController
     }
 
     /**
-     * Filter rooms (example)
+     * Filter rooms 
      */
     public function filterAction(): void
     {
@@ -54,4 +56,11 @@ class RoomController extends ActionController
 
         $this->view->assign('rooms', $rooms);
     }
+
+    public function bookingAction(int $room): void
+{
+    $selectedRoom = $this->roomRepository->findByUid($room);
+    $this->view->assign('room', $selectedRoom);
+}
+
 }
