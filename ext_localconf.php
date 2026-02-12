@@ -26,4 +26,16 @@ use Hotelier\HotelierBooking\Controller\BookingController;
             BookingController::class => 'submit'
         ]
     );
+    ExtensionUtility::configurePlugin(
+        'HotelierBooking',
+        'ReservationForm',
+        [
+            BookingController::class => 'reservation, reservationsubmit'
+        ],
+        [
+            BookingController::class => 'reservationsubmit'
+        ]
+    );
+
+
 })();

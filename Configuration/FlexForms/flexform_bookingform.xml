@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<T3DataStructure>
+    <sheets>
+        <sDEF>
+            <ROOT>
+                <sheetTitle>General Settings</sheetTitle>
+                <type>array</type>
+                <el>
+                    <!-- Items per page -->
+                    <settings.images>
+                        <label>LLL:EXT:hotelier_booking/Resources/Private/Language/locallang_be.xlf:images</label>
+                      <config>
+                                <type>inline</type>
+                                <maxitems>1</maxitems>
+                                <foreign_table>sys_file_reference</foreign_table>
+                                <foreign_table_field>tablenames</foreign_table_field>
+                                <foreign_label>uid_local</foreign_label>
+                                <foreign_sortby>sorting_foreign</foreign_sortby>
+                                <foreign_field>uid_foreign</foreign_field>
+                                <foreign_selector>uid_local</foreign_selector>
+                                <foreign_selector_fieldTcaOverride>
+                                    <config>
+                                        <appearance>
+                                            <elementBrowserType>file</elementBrowserType>
+                                            <elementBrowserAllowed>gif,jpg,jpeg,png,svg</elementBrowserAllowed>
+                                        </appearance>
+                                    </config>
+                                </foreign_selector_fieldTcaOverride>
+                                <foreign_match_fields>
+                                    <fieldname>image</fieldname> <!-- This is the field name -->
+                                </foreign_match_fields>
+                            </config>
+                    </settings.images>
+                </el>
+            </ROOT>
+        </sDEF>
+    </sheets>
+</T3DataStructure>
+
+
+

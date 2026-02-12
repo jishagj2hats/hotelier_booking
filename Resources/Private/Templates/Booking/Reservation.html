@@ -1,0 +1,48 @@
+<f:layout name="Default" />
+
+<f:section name="Main">
+    <div class="container-fluid booking pb-5 wow fadeIn" data-wow-delay="0.1s">
+        <div class="container">
+            <div class="bg-white shadow" style="padding: 35px;">
+                <f:form action="reservationsubmit" controller="Booking" pluginName="ReservationForm"
+                    extensionName="HotelierBooking" pageUid="{settings.redirectPage}" method="post">
+                    <div class="row g-2">
+                        <f:form.hidden name="selectedRoom" value="{selectedRoom}" />
+
+                        <div class="col-md-10">
+                            <div class="row g-2">
+                                <div class="col-md-3">
+                                    <div class="date" id="date1" data-target-input="nearest">
+                                        <f:form.textfield name="checkin" class="form-control datetimepicker-input"
+                                            placeholder="Check in" data-target="#date1" data-toggle="datetimepicker"
+                                            required="required" />
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="date" id="date2" data-target-input="nearest">
+                                        <f:form.textfield name="checkout" class="form-control datetimepicker-input"
+                                            placeholder="Check out" data-target="#date2" data-toggle="datetimepicker"
+                                            required="required" />
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <f:form.select name="adult"
+                                        options="{0: 'Adult', 1: 'Adult 1', 2: 'Adult 2', 3: 'Adult 3'}"
+                                        class="form-select" value="0" />
+                                </div>
+                                <div class="col-md-3">
+                                    <f:form.select name="child"
+                                        options="{0: 'Child', 1: 'Child 1', 2: 'Child 2', 3: 'Child 3'}"
+                                        class="form-select" value="0" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <f:form.submit value="Submit" class="btn btn-primary w-100" />
+                        </div>
+                    </div>
+                </f:form>
+            </div>
+        </div>
+    </div>
+</f:section>

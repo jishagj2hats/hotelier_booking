@@ -1,0 +1,119 @@
+<f:layout name="Default" />
+<f:section name="Main">
+
+<f:flashMessages />
+
+<f:form action="reservationsubmit"
+        controller="Booking"
+        pluginName="ReservationForm"
+        extensionName="HotelierBooking"
+        method="post"
+        class="row g-3">
+    
+    <!-- Hidden fields to preserve data from previous form -->
+    <f:form.hidden name="checkin" value="{checkin}" />
+    <f:form.hidden name="checkout" value="{checkout}" />
+    <f:form.hidden name="adult" value="{adult}" />
+    <f:form.hidden name="child" value="{child}" />
+    <f:form.hidden name="room" value="{selectedRoom}" />
+    
+    <div class="col-md-6">
+        <div class="form-floating">
+            <f:form.textfield name="name"
+                              class="form-control"
+                              id="name"
+                              placeholder="Your Name"
+                              required="1" />
+            <label for="name">Your Name</label>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="form-floating">
+            <f:form.textfield name="email"
+                              type="email"
+                              class="form-control"
+                              id="email"
+                              placeholder="Your Email"
+                              required="1" />
+            <label for="email">Your Email</label>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="form-floating date" id="date3">
+            <f:form.textfield name="checkin"
+                              class="form-control datetimepicker-input"
+                              id="checkin"
+                              placeholder="Check In"
+                              data-toggle="datetimepicker"
+                              value="{checkin}"/>
+            <label for="checkin">Check In</label>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="form-floating date" id="date4">
+            <f:form.textfield name="checkout"
+                              class="form-control datetimepicker-input"
+                              id="checkout"
+                              placeholder="Check Out"
+                              data-toggle="datetimepicker"
+                              value="{checkout}"/>
+            <label for="checkout">Check Out</label>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="form-floating">
+            <f:form.select name="adult"
+                           class="form-select"
+                           id="select1"
+                           options="{1:'Adult 1',2:'Adult 2',3:'Adult 3'}"
+                           value="{adult}"/>
+            <label for="select1">Select Adult</label>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="form-floating">
+            <f:form.select name="child"
+                           class="form-select"
+                           id="select2"
+                           options="{0:'No Child',1:'Child 1',2:'Child 2',3:'Child 3'}"
+                           value="{child}"/>
+            <label for="select2">Select Child</label>
+        </div>
+    </div>
+    
+    <div class="col-12">
+        <div class="form-floating">
+            <f:form.select name="room"
+                           class="form-select"
+                           id="select3"
+                           options="{rooms}"
+                           optionLabelField="title"
+                           optionValueField="uid"
+                           value="{rooms}"/>
+            <label for="select3">Select A Room</label>
+        </div>
+    </div>
+    
+    <div class="col-12">
+        <div class="form-floating">
+            <f:form.textarea name="message"
+                             class="form-control"
+                             id="message"
+                             placeholder="Special Request"
+                             style="height: 100px" />
+            <label for="message">Special Request</label>
+        </div>
+    </div>
+    
+    <div class="col-12">
+        <f:form.submit value="Book Now"
+                       class="btn btn-primary w-100 py-3" />
+    </div>
+</f:form>
+
+</f:section>

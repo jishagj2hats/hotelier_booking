@@ -6,6 +6,9 @@
 			<trans-unit id="itemsPerPage" xml:space="preserve">
 				<source>items per Page</source>
 			</trans-unit>
+			<trans-unit id="images" xml:space="preserve">
+				<source>Images</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

@@ -3,6 +3,16 @@ plugin.tx_hotelierbooking_rooms.view {
     partialRootPath = EXT:hotelier_booking/Resources/Private/Partials/
     layoutRootPath = EXT:hotelier_booking/Resources/Private/Layouts/
 }
+tt_content.list.20.tx_hotelierbooking_rooms {
+    dataProcessing {
+        10 = TYPO3\CMS\Frontend\DataProcessing\FilesProcessor
+        10 {
+            references.fieldName = settings.images
+            as = images
+        }
+    }
+}
+
 
 # Remove header from the specific plugin
 tt_content.list.20.hotelierbooking_rooms {
