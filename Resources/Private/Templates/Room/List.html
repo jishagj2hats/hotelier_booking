@@ -50,12 +50,13 @@
                                         <i class="fa fa-bath text-primary me-2"></i>
                                         {room.baths} Bath
                                     </small>
+                                    <f:if condition="{room.wifiAvailable} != FALSE">
+                                        <small>
+                                            <i class="fa fa-wifi text-primary me-2"></i>Wifi
+                                        </small>
+                                    </f:if>
 
-                                    <small>
-                                        <i class="fa fa-wifi text-primary me-2"></i>Wifi
-                                    </small>
                                 </div>
-
                                 <p class="text-body mb-3">
                                     <f:format.html>{room.description}</f:format.html>
                                 </p>
