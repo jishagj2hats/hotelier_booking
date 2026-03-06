@@ -27,8 +27,9 @@ class BookingController extends ActionController
     {
         $selectedRoom = null;
         $disabledDates = [];
-
-
+        $room = $this->request->hasArgument('room')
+            ? (int) $this->request->getArgument('room')
+            : null;
         if ($room) {
             $selectedRoom = $this->roomRepository->findByUid($room);
 
@@ -72,7 +73,19 @@ class BookingController extends ActionController
         $room = $this->roomRepository->findByUid($roomUid);
 
         if ($room !== null) {
+            // Check availability before booking
+            if ($room->getNumberOfRooms() <= 0) {
+                $this->addFlashMessage(
+                    'Sorry, this room is no longer available.',
+                    'Not Available',
+                    \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::ERROR
+                );
+                return $this->redirect('form');
+            }
             $bookingObj->setRoom($room);
+            // Decrement available rooms
+            $room->setNumberOfRooms($room->getNumberOfRooms() - 1);
+            $this->roomRepository->update($room);
         }
         $site = $this->request->getAttribute('site');
 
@@ -96,13 +109,15 @@ class BookingController extends ActionController
 
         $arguments = $this->request->getArguments();
         $rooms = $this->roomRepository->findAll()->toArray();
+        $availableRooms = array_filter($rooms, fn($room) => $room->getNumberOfRooms() > 0);
+
         $this->view->assignMultiple([
             'checkin' => $arguments['checkin'] ?? '',
             'checkout' => $arguments['checkout'] ?? '',
             'adult' => $arguments['adult'] ?? 0,
             'child' => $arguments['child'] ?? 0,
             'selectedRoom' => $arguments['selectedRoom'] ?? '',
-            'rooms' => $rooms,
+            'rooms' => $availableRooms,
         ]);
 
         return $this->htmlResponse();

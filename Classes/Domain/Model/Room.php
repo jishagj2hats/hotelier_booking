@@ -16,6 +16,11 @@ class Room extends AbstractEntity
     protected int $numberOfBathrooms = 0;
     protected bool $wifiAvailable = false;
     protected string $description = '';
+    protected int $numberOfRooms = 1;
+    protected int $roomSize = 0;
+    protected int $maxOccupancy = 1;
+    protected bool $acAvailable = false;
+    protected int $rating = 5;
 
     /**
      * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\TYPO3\CMS\Extbase\Domain\Model\FileReference>
@@ -133,5 +138,48 @@ class Room extends AbstractEntity
     public function setDescription(string $description): void
     {
         $this->description = $description;
+    }
+    public function getNumberOfRooms(): int
+    {
+        return $this->numberOfRooms;
+    }
+
+    public function setNumberOfRooms(int $numberOfRooms): void
+    {
+        $this->numberOfRooms = $numberOfRooms;
+    }
+    public function getRoomSize(): int
+    {
+        return $this->roomSize;
+    }
+    public function setRoomSize(int $roomSize): void
+    {
+        $this->roomSize = $roomSize;
+    }
+
+    public function getMaxOccupancy(): int
+    {
+        return $this->maxOccupancy;
+    }
+    public function setMaxOccupancy(int $maxOccupancy): void
+    {
+        $this->maxOccupancy = $maxOccupancy;
+    }
+
+    public function getAcAvailable(): bool
+    {
+        return $this->acAvailable;
+    }
+    public function setAcAvailable(bool $acAvailable): void
+    {
+        $this->acAvailable = $acAvailable;
+    }
+    public function getRating(): int
+    {
+        return $this->rating;
+    }
+    public function setRating(int $rating): void
+    {
+        $this->rating = $rating;
     }
 }

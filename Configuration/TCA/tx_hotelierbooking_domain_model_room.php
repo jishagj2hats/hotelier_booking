@@ -16,7 +16,7 @@ return [
         '1' => [
             'showitem' => '
                 --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:general,
-                    title, category, rent,
+                    title, category, rent, number_of_rooms,room_size,max_occupancy,ac_available,rating,
                 --div--;Details,
                     number_of_beds, number_of_bathrooms, wifi_available,
                 --div--;Media,
@@ -71,7 +71,7 @@ return [
             'config' => [
                 'type' => 'file',
                 'allowed' => 'common-image-types',
-                'maxitems' => 15, 
+                'maxitems' => 15,
             ],
         ],
         'rent' => [
@@ -128,6 +128,60 @@ return [
                 'cols' => 40,
                 'rows' => 15,
                 'eval' => 'trim'
+            ]
+        ],
+        'number_of_rooms' => [
+            'exclude' => false,
+            'label' => 'Number of Rooms',
+            'config' => [
+                'type' => 'number',
+                'size' => 5,
+                'default' => 1,
+                'required' => true
+            ]
+        ],
+        'room_size' => [
+            'exclude' => false,
+            'label' => 'Room Size (sqft)',
+            'config' => [
+                'type' => 'number',
+                'size' => 5,
+                'default' => 0,
+                'required' => false
+            ]
+        ],
+        'max_occupancy' => [
+            'exclude' => false,
+            'label' => 'Max Occupancy',
+            'config' => [
+                'type' => 'number',
+                'size' => 5,
+                'default' => 1,
+                'required' => true
+            ]
+        ],
+        'ac_available' => [
+            'exclude' => false,
+            'label' => 'AC Available',
+            'config' => [
+                'type' => 'check',
+                'renderType' => 'checkboxToggle',
+                'items' => [
+                    [
+                        'label' => '',
+                        'invertStateDisplay' => false
+                    ]
+                ]
+            ]
+        ],
+        'rating' => [
+            'exclude' => false,
+            'label' => 'Rating (1-5)',
+            'config' => [
+                'type' => 'number',
+                'size' => 3,
+                'default' => 5,
+                'required' => false
             ]
         ],
     ],

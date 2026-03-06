@@ -1,82 +1,114 @@
 <f:layout name="Default" />
 
 <f:section name="Main">
-    <div class="container-xxl py-5">
-        <div class="container">
-            <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-                <h6 class="section-title text-center text-primary text-uppercase">Our Rooms</h6>
-                <h1 class="mb-5">Explore Our <span class="text-primary text-uppercase">Rooms</span></h1>
-            </div>
+  <div class="container-xxl py-5">
+    <div class="container">
+      <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+        <h6 class="section-title text-center text-primary text-uppercase">
+          Our Rooms
+        </h6>
+        <h1 class="mb-5">
+          Explore Our <span class="text-primary text-uppercase">Rooms</span>
+        </h1>
+      </div>
 
-            <div class="row g-4">
-                <f:for each="{rooms}" as="room" iteration="i">
-                    <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="{i.index * 0.2 + 0.1}s">
-                        <div class="room-item shadow rounded overflow-hidden">
-
-                            <div class="position-relative">
-                                <f:if condition="{room.images}">
-                                    <f:for each="{room.images}" as="image" iteration="it">
-                                        <f:if condition="{it.isFirst}">
-                                            <f:image image="{image}" class="img-fluid" alt="{room.title}" />
-                                        </f:if>
-                                    </f:for>
-                                </f:if>
-
-
-                                <small class="position-absolute start-0 top-100 translate-middle-y 
-                                    bg-primary text-white rounded py-1 px-3 ms-4">
-                                    ${room.rent}/Night
-                                </small>
-                            </div>
-
-                            <div class="p-4 mt-2">
-                                <div class="d-flex justify-content-between mb-3">
-                                    <h5 class="mb-0">{room.title}</h5>
-
-                                    <div class="ps-2">
-                                        <f:for each="{0:1,1:2,2:3,3:4,4:5}" as="star">
-                                            <small class="fa fa-star text-primary"></small>
-                                        </f:for>
-                                    </div>
-                                </div>
-
-                                <div class="d-flex mb-3">
-                                    <small class="border-end me-3 pe-3">
-                                        <i class="fa fa-bed text-primary me-2"></i>
-                                        {room.beds} Bed
-                                    </small>
-
-                                    <small class="border-end me-3 pe-3">
-                                        <i class="fa fa-bath text-primary me-2"></i>
-                                        {room.baths} Bath
-                                    </small>
-                                    <f:if condition="{room.wifiAvailable} != FALSE">
-                                        <small>
-                                            <i class="fa fa-wifi text-primary me-2"></i>Wifi
-                                        </small>
-                                    </f:if>
-
-                                </div>
-                                <p class="text-body mb-3">
-                                    <f:format.html>{room.description}</f:format.html>
-                                </p>
-
-                                <div class="d-flex justify-content-between">
-                                    <f:link.page pageUid="{site.settings.bookingPage}"
-                                        additionalParams="{room: room.uid}"
-                                        class="btn btn-sm btn-dark rounded py-2 px-4">
-                                        Book Now
-                                    </f:link.page>
-
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </f:for>
-
-            </div>
-        </div>
+      <div class="row g-4">
+        <f:for each="{rooms}" as="room" iteration="i">
+          <div
+            class="col-lg-4 col-md-6 wow fadeInUp"
+            data-wow-delay="{i.index * 0.2 + 0.1}s"
+          >
+            <div class="room-item shadow rounded overflow-hidden">
+    <div class="position-relative">
+        <f:if condition="{room.images}">
+            <f:for each="{room.images}" as="image" iteration="it">
+                <f:if condition="{it.isFirst}">
+                    <f:image image="{image}" class="img-fluid" alt="{room.title}" />
+                </f:if>
+            </f:for>
+        </f:if>
+        <small class="position-absolute start-0 top-100 translate-middle-y 
+                       bg-primary text-white rounded py-1 px-3 ms-4">
+            ${room.rent}/Night
+        </small>
     </div>
 
+    <div class="p-4 mt-2">
+
+        <!-- Title + Star Rating -->
+        <div class="d-flex justify-content-between mb-3">
+            <h5 class="mb-0">{room.title}</h5>
+            <div class="ps-2">
+                <f:for each="{0:1,1:2,2:3,3:4,4:5}" as="star">
+                    <f:if condition="{star} <= {room.rating}">
+                        <small class="fa fa-star text-primary"></small>
+                    </f:if>
+                    <f:if condition="{star} > {room.rating}">
+                        <small class="fa fa-star text-muted"></small>
+                    </f:if>
+                </f:for>
+            </div>
+        </div>
+
+        <!-- Beds, Baths, Wifi -->
+        <div class="d-flex flex-wrap mb-3">
+            <small class="border-end me-3 pe-3">
+                <i class="fa fa-bed text-primary me-2"></i>{room.numberOfBeds} Bed
+            </small>
+            <small class="border-end me-3 pe-3">
+                <i class="fa fa-bath text-primary me-2"></i>{room.numberOfBathrooms} Bath
+            </small>
+            <f:if condition="{room.wifiAvailable}">
+                <small class="border-end me-3 pe-3">
+                    <i class="fa fa-wifi text-primary me-2"></i>Wifi
+                </small>
+            </f:if>
+            <f:if condition="{room.acAvailable}">
+                <small>
+                    <i class="fa fa-snowflake text-primary me-2"></i>AC
+                </small>
+            </f:if>
+            <f:if condition="{room.acAvailable} == false">
+                <small>
+                    <i class="fa fa-fan text-muted me-2"></i>Non-AC
+                </small>
+            </f:if>
+        </div>
+
+        <!-- Extra Details -->
+        <div class="d-flex flex-wrap gap-2 mb-3">
+            <span class="badge bg-light text-dark border">
+                <i class="fa fa-expand text-primary me-1"></i>
+                {room.roomSize} sqft
+            </span>
+            <span class="badge bg-light text-dark border">
+                <i class="fa fa-users text-primary me-1"></i>
+                Max {room.maxOccupancy} Guests
+            </span>
+            <span class="badge bg-light text-dark border">
+                <i class="fa fa-door-open text-primary me-1"></i>
+                {room.numberOfRooms} Left
+            </span>
+        </div>
+
+        <p class="text-body mb-3">
+            <f:format.html>{room.description}</f:format.html>
+        </p>
+
+        <div class="d-flex justify-content-between">
+            <f:link.page
+                pageUid="{site.settings.bookingPage}"
+                additionalParams="{tx_hotelierbooking_booking: {room: room.uid}}"
+                class="btn btn-sm btn-dark rounded py-2 px-4">
+                Book Now
+            </f:link.page>
+        </div>
+
+    </div>
+</div>
+          </div>
+        </f:for>
+      </div>
+    </div>
+  </div>
 </f:section>

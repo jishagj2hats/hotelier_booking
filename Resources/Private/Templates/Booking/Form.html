@@ -1,80 +1,122 @@
-<f:flashMessages />
+<f:layout name="Default" />
+<f:section name="Main">
+<div class="container-xxl py-5">
+    <div class="container">
 
+        <f:flashMessages />
 
+        <!-- SELECTED ROOM PROFILE CARD -->
+        <f:if condition="{selectedRoom}">
+            <div class="card shadow rounded overflow-hidden mb-4">
+                <div class="row g-0 align-items-center">
 
-        <!-- RIGHT FORM -->
-        
+                    <!-- Room Image -->
+                    <div class="col-md-3">
+                        <f:if condition="{selectedRoom.images}">
+                            <f:for each="{selectedRoom.images}" as="image" iteration="it">
+                                <f:if condition="{it.isFirst}">
+                                    <f:image 
+                                        image="{image}" 
+                                        class="img-fluid w-100"
+                                        style="height: 200px; object-fit: cover;"
+                                        alt="{selectedRoom.title}" />
+                                </f:if>
+                            </f:for>
+                        </f:if>
+                    </div>
 
-                <f:form action="submit" controller="Booking" class="row g-3" object="{booking}" objectName="booking">
-                    <f:form.hidden property="room" value="{roomUid}" />
-
-                    <div class="col-md-6">
-                        <div class="form-floating">
-                            <f:form.textfield class="form-control" id="name" property="name" placeholder="Your Name"
-                                required="required" />
-                            <label for="name">Your Name</label>
+                    <!-- Room Details -->
+                    <div class="col-md-9 p-4">
+                        <h4 class="mb-1">{selectedRoom.title}</h4>
+                        <p class="text-primary fw-bold fs-5 mb-2">
+                            ${selectedRoom.rent} / Night
+                        </p>
+                        <div class="d-flex gap-4 mb-2">
+                            <span>
+                                <i class="fa fa-bed text-primary me-2"></i>
+                                {selectedRoom.numberOfBeds} Bed
+                            </span>
+                            <span>
+                                <i class="fa fa-bath text-primary me-2"></i>
+                                {selectedRoom.numberOfBathrooms} Bath
+                            </span>
+                            <f:if condition="{selectedRoom.wifiAvailable}">
+                                <span>
+                                    <i class="fa fa-wifi text-primary me-2"></i> Wifi
+                                </span>
+                            </f:if>
                         </div>
+                        <p class="text-muted mb-0">
+                            <f:format.html>{selectedRoom.description}</f:format.html>
+                        </p>
                     </div>
 
-                    <div class="col-md-6">
-                        <div class="form-floating">
-                            <f:form.textfield class="form-control" id="email" property="email" placeholder="Your Email"
-                                required="required" />
-                            <label for="email">Your Email</label>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-floating">
-                            <f:form.textfield type="datetime-local" class="form-control" required="required"
-                                property="checkin" />
-                            <label>Check In</label>
-                        </div>
-                    </div>
+                </div>
+            </div>
+        </f:if>
 
-                    <div class="col-md-6">
-                        <div class="form-floating">
-                            <f:form.textfield type="datetime-local" class="form-control" required="required"
-                                property="checkout" />
-                            <label>Check Out</label>
-                        </div>
-                    </div>
+        <!-- BOOKING FORM — full width -->
+        <f:form action="submit" controller="Booking" class="row g-3" 
+                object="{booking}" objectName="booking">
 
+            <f:form.hidden property="room" value="{selectedRoom.uid}" />
 
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <f:form.textfield class="form-control" id="name" 
+                        property="name" placeholder="Your Name" required="required" />
+                    <label for="name">Your Name</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <f:form.textfield class="form-control" id="email" 
+                        property="email" placeholder="Your Email" required="required" />
+                    <label for="email">Your Email</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <f:form.textfield type="datetime-local" class="form-control" 
+                        required="required" property="checkin" />
+                    <label>Check In</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <f:form.textfield type="datetime-local" class="form-control" 
+                        required="required" property="checkout" />
+                    <label>Check Out</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <f:form.select class="form-select" id="adults" property="adults"
+                        options="{1:'Adult 1', 2:'Adult 2', 3:'Adult 3'}" />
+                    <label for="adults">Select Adult</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <f:form.select class="form-select" id="children" property="children"
+                        options="{0:'Child 0', 1:'Child 1', 2:'Child 2'}" />
+                    <label for="children">Select Child</label>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="form-floating">
+                    <f:form.textarea class="form-control" id="message" 
+                        property="message" style="height: 100px" 
+                        placeholder="Special Request" />
+                    <label for="message">Special Request</label>
+                </div>
+            </div>
+            <div class="col-12">
+                <button class="btn btn-primary w-100 py-3" type="submit">BOOK NOW</button>
+            </div>
 
-                    <div class="col-md-6">
-                        <div class="form-floating">
-                            <f:form.select class="form-select" id="adults" property="adults"
-                                options="{1:'Adult 1', 2:'Adult 2', 3:'Adult 3'}" />
-                            <label for="adults">Select Adult</label>
-                        </div>
-                    </div>
+        </f:form>
 
-                    <div class="col-md-6">
-                        <div class="form-floating">
-                            <f:form.select class="form-select" id="children" property="children"
-                                options="{0:'Child 0', 1:'Child 1', 2:'Child 2'}" />
-                            <label for="children">Select Child</label>
-                        </div>
-                    </div>
-
-                    <div class="col-12">
-                        <div class="form-floating">
-                            <f:form.select class="form-select" id="roomSelect" property="roomSelect" options="{rooms}"
-                                optionValueField="uid" optionLabelField="title" />
-                            <label for="roomSelect">Select A Room</label>
-                        </div>
-                    </div>
-
-                    <div class="col-12">
-                        <div class="form-floating">
-                            <f:form.textarea class="form-control" id="message" property="message" style="height: 100px"
-                                placeholder="Special Request" />
-                            <label for="message">Special Request</label>
-                        </div>
-                    </div>
-
-                    <div class="col-12">
-                        <button class="btn btn-primary w-100 py-3" type="submit">Book Now</button>
-                    </div>
-
-                </f:form>
+    </div>
+</div>
+</f:section>
