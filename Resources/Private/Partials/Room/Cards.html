@@ -1,0 +1,340 @@
+<!-- ROOM CARDS -->
+<div class="row g-4">
+  <f:for each="{rooms}" as="room" iteration="i">
+    <f:variable name="offerPrice" value="{offerPrices.{room.uid}}" />
+    <f:variable
+      name="priceBreakdown"
+      value="{priceBreakdowns.{room.uid}}"
+    />
+    <div
+      class="col-lg-4 col-md-6 wow fadeInUp"
+      data-wow-delay="{i.index * 0.2 + 0.1}s"
+    >
+      <div
+        class="room-item shadow rounded overflow-hidden"
+        data-room-uid="{room.uid}"
+        data-room-title="{room.title}"
+        data-room-rent="{room.rent}"
+        data-room-size="{room.roomSize}"
+        data-room-beds="{room.numberOfBeds}"
+        data-room-baths="{room.numberOfBathrooms}"
+        data-room-wifi="{room.wifiAvailable}"
+        data-room-ac="{room.acAvailable}"
+        data-room-occupancy="{room.maxOccupancy}"
+        data-room-rooms="{room.numberOfRooms}"
+        data-room-rating="{room.rating}"
+        data-booking-url="{f:uri.page(pageUid: site.settings.detailPage, additionalParams: {tx_hotelierbooking_booking: {room: room.uid}})}"
+      >
+        <div class="position-relative">
+          <f:if condition="{room.images}">
+            <f:for each="{room.images}" as="image" iteration="it">
+              <f:if condition="{it.isFirst}">
+                <f:link.page
+                  pageUid="{site.settings.roomsPage}"
+                  additionalParams="{tx_hotelierbooking_rooms: {action: 'show', controller: 'Room', room: room.uid}}"
+                  class="d-block"
+                >
+                  <f:image
+                    image="{image}"
+                    class="img-fluid"
+                    alt="{room.title}"
+                    data-room-image="1"
+                  />
+                </f:link.page>
+              </f:if>
+            </f:for>
+          </f:if>
+
+          <!-- Price + transparent breakdown (per night) -->
+          <div
+            class="position-absolute start-0 top-100 translate-middle-y ms-4 rounded py-1 px-3 d-flex align-items-center gap-2 {f:if(condition: '{offerPrice}', then: 'bg-danger text-white', else: 'bg-primary text-white')}"
+          >
+            <div class="me-1">
+              <f:if condition="{offerPrice}">
+                <f:then>
+                  <span class="text-decoration-line-through opacity-75 me-1">
+                    ₹<f:format.number
+                      decimals="0"
+                      thousandsSeparator=","
+                      decimalSeparator="."
+                      >{room.rent}</f:format.number
+                    >
+                  </span>
+                  <strong
+                    >₹<f:format.number
+                      decimals="0"
+                      thousandsSeparator=","
+                      decimalSeparator="."
+                      >{offerPrice}</f:format.number
+                    ></strong
+                  >/Night
+                </f:then>
+                <f:else>
+                  <strong
+                    >₹<f:format.number
+                      decimals="0"
+                      thousandsSeparator=","
+                      decimalSeparator="."
+                    >
+                      {f:if(condition: '{priceBreakdown}', then:
+                      priceBreakdown.base, else: room.rent)}
+                    </f:format.number></strong
+                  >/Night
+                </f:else>
+              </f:if>
+            </div>
+            <span
+              class="price-breakdown-toggle text-white-50 text-decoration-underline"
+            >
+              i
+              <span class="price-breakdown-panel text-start">
+                <!-- Base Rate -->
+                <div class="price-breakdown-panel-row">
+                  <span>Base rate</span>
+                  <span
+                    >₹<f:format.number
+                      decimals="0"
+                      thousandsSeparator=","
+                      decimalSeparator="."
+                      >{priceBreakdown.base}</f:format.number
+                    ></span
+                  >
+                </div>
+
+                <!-- Discount — only if offer active -->
+                <f:if condition="{priceBreakdown.discount} > 0">
+                  <div class="price-breakdown-panel-row text-success">
+                    <span>Discount</span>
+                    <span
+                      >−₹<f:format.number
+                        decimals="0"
+                        thousandsSeparator=","
+                        decimalSeparator="."
+                        >{priceBreakdown.discount}</f:format.number
+                      ></span
+                    >
+                  </div>
+                </f:if>
+
+                <!-- GST -->
+                <f:if condition="{priceBreakdown.gstRate} > 0">
+                  <div class="price-breakdown-panel-row">
+                    <span
+                      >GST (<f:format.number decimals="0"
+                        >{priceBreakdown.gstRate}</f:format.number
+                      >%)</span
+                    >
+                    <span
+                      >₹<f:format.number
+                        decimals="0"
+                        thousandsSeparator=","
+                        decimalSeparator="."
+                        >{priceBreakdown.gst}</f:format.number
+                      ></span
+                    >
+                  </div>
+                </f:if>
+
+                <!-- Service Charge -->
+                <f:if condition="{priceBreakdown.serviceRate} > 0">
+                  <div class="price-breakdown-panel-row">
+                    <span
+                      >Service charge (<f:format.number decimals="0"
+                        >{priceBreakdown.serviceRate}</f:format.number
+                      >%)</span
+                    >
+                    <span
+                      >₹<f:format.number
+                        decimals="0"
+                        thousandsSeparator=","
+                        decimalSeparator="."
+                        >{priceBreakdown.service}</f:format.number
+                      ></span
+                    >
+                  </div>
+                </f:if>
+
+                <hr class="my-1" />
+
+                <!-- Total -->
+                <div class="price-breakdown-panel-row">
+                  <strong>Total per night</strong>
+                  <strong
+                    >₹<f:format.number
+                      decimals="0"
+                      thousandsSeparator=","
+                      decimalSeparator="."
+                      >{priceBreakdown.total}</f:format.number
+                    ></strong
+                  >
+                </div>
+              </span>
+            </span>
+          </div>
+
+          <f:if condition="{priceBreakdown.discount} > 0">
+            <span class="position-absolute top-0 start-0 m-2 badge bg-danger">
+              <i class="fa fa-tag me-1"></i> Special Offer
+            </span>
+          </f:if>
+
+        </div>
+
+        <div class="p-4 mt-2">
+          <div class="d-flex justify-content-between mb-3">
+            <h5 class="mb-0">
+              {room.title}
+            </h5>
+            <div class="ps-2">
+              <f:for each="{0:1,1:2,2:3,3:4,4:5}" as="star">
+                <f:if condition="{star} <= {room.rating}">
+                  <small class="fa fa-star text-primary"></small>
+                </f:if>
+                <f:if condition="{star} > {room.rating}">
+                  <small class="fa fa-star text-muted"></small>
+                </f:if>
+              </f:for>
+            </div>
+          </div>
+
+          <div class="d-flex flex-wrap mb-3">
+            <small class="border-end me-3 pe-3">
+              <i class="fa fa-bed text-primary me-2"></i>{room.numberOfBeds} Bed
+            </small>
+            <small class="border-end me-3 pe-3">
+              <i class="fa fa-bath text-primary me-2"></i
+              >{room.numberOfBathrooms} Bath
+            </small>
+            <f:if condition="{room.wifiAvailable}">
+              <small class="border-end me-3 pe-3">
+                <i class="fa fa-wifi text-primary me-2"></i>Wifi
+              </small>
+            </f:if>
+            <f:if condition="{room.acAvailable}">
+              <small><i class="fa fa-snowflake text-primary me-2"></i>AC</small>
+            </f:if>
+            <f:if condition="{room.acAvailable} == false">
+              <small><i class="fa fa-fan text-muted me-2"></i>Non-AC</small>
+            </f:if>
+          </div>
+
+          <div class="d-flex flex-wrap gap-2 mb-3">
+            <span class="badge bg-light text-dark border">
+              <i class="fa fa-expand text-primary me-1"></i>{room.roomSize} sqft
+            </span>
+            <span
+              class="badge bg-light text-dark border"
+              data-bs-toggle="tooltip"
+              title="Max {room.maxAdults} Adults &amp; {room.maxChildren} Children"
+            >
+              <i class="fa fa-users text-primary me-1"></i>
+              Max {room.maxOccupancy} Guests
+            </span>
+            <span class="badge bg-light text-dark border">
+              <i class="fa fa-door-open text-primary me-1"></i>
+              <!-- Always show numeric count -->
+              <span>
+                <f:if condition="{room.numberOfRooms} == 1">
+                  <f:then>{room.numberOfRooms} Room</f:then>
+                  <f:else>{room.numberOfRooms} Rooms</f:else>
+                </f:if>
+              </span>
+              <!-- Availability status -->
+              <span class="ms-1 text-muted">
+                <f:if condition="{room.numberOfRooms} == 0">
+                  <f:then>• Sold Out</f:then>
+                  <f:else>
+                    <f:if condition="{room.numberOfRooms} == 1">
+                      <f:then>• Only 1 Room Left</f:then>
+                      <f:else>
+                        <f:if condition="{room.numberOfRooms} <= 4">
+                          <f:then>• High Demand</f:then>
+                          <f:else>• Available</f:else>
+                        </f:if>
+                      </f:else>
+                    </f:if>
+                  </f:else>
+                </f:if>
+              </span>
+            </span>
+          </div>
+
+          <p class="text-body mb-3">
+            <f:format.html>{room.description}</f:format.html>
+          </p>
+
+          <!-- Nearby attractions compact badges -->
+          <div class="mb-3">
+            <f:render
+              partial="Room/Attractions"
+              arguments="{attractions: room.attractions, mode: 'compact'}"
+            />
+            <!-- String for comparison table: e.g. 'Beach 5min, Restaurant 2min' -->
+            <div class="d-none" data-room-attractions-labels>
+              <f:for each="{room.attractions}" as="attraction" iteration="it">
+                <f:render section="CategoryLabel" partial="Room/Attractions" arguments="{category: attraction.category}" />
+                <f:if condition="{attraction.suggestedLabel}">
+                  <f:then> {attraction.suggestedLabel}</f:then>
+                  <f:else> {attraction.title}</f:else>
+                </f:if>
+                <f:if condition="!{it.isLast}">, </f:if>
+              </f:for>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center gap-3">
+            <f:link.page
+              pageUid="{site.settings.bookingPage}"
+              additionalParams="{tx_hotelierbooking_booking: {room: room.uid}}"
+              class="btn btn-sm btn-dark rounded py-2 px-4"
+            >
+              Book Now
+            </f:link.page>
+
+            <div class="compare-check-wrapper m-0 d-flex align-items-center">
+              <input
+                class="btn-check compare-checkbox"
+                type="checkbox"
+                id="compare-{room.uid}"
+                data-uid="{room.uid}"
+                autocomplete="off"
+              />
+              <label
+                class="btn btn-sm btn-outline-secondary d-flex align-items-center px-3 py-1"
+                for="compare-{room.uid}"
+                title="Add to comparison"
+              >
+                <span class="compare-label compare-label-unchecked small fw-semibold">
+                  [ ⇄ Compare ]
+                </span>
+                <span class="compare-label compare-label-checked small fw-semibold">
+                  [✓ ⇄ Compare ]
+                </span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </f:for>
+</div>
+
+<style>
+  .compare-label-checked {
+    display: none;
+  }
+
+  .btn-check:checked + .btn .compare-label-unchecked {
+    display: none;
+  }
+
+  .btn-check:checked + .btn .compare-label-checked {
+    display: inline;
+  }
+
+  .btn-check:checked + .btn.btn-outline-secondary {
+    color: #fff;
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+  }
+</style>

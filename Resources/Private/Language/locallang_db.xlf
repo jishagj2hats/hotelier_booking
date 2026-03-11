@@ -9,6 +9,9 @@
             <trans-unit id="tx_hotelierbooking_domain_model_room" xml:space="preserve">
 				<source>Rooms</source>
 			</trans-unit>
+            <trans-unit id="tx_hotelierbooking_domain_model_offer" xml:space="preserve">
+				<source>Offers</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

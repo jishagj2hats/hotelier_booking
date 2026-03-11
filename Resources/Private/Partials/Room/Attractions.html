@@ -1,0 +1,124 @@
+<f:if condition="{attractions -> f:count()}">
+    <f:then>
+        <f:if condition="{mode} == 'compact'">
+            <div class="mt-3">
+                <small class="text-muted d-block mb-1">Nearby:</small>
+                <div class="d-flex flex-wrap gap-2">
+                    <f:for each="{attractions}" as="attraction">
+                        <span class="badge bg-light text-dark border nearby-badge">
+                            <f:render section="CategoryIcon" arguments="{category: attraction.category}" />
+                            <f:if condition="{attraction.suggestedLabel}">
+                                <f:then>{attraction.suggestedLabel}</f:then>
+                                <f:else>{attraction.title}</f:else>
+                            </f:if>
+                        </span>
+                    </f:for>
+                </div>
+            </div>
+        </f:if>
+
+        <f:if condition="{mode} == 'full'">
+            <div class="mt-5">
+                <h4 class="mb-3">
+                    <i class="fa fa-location-dot text-primary me-2"></i>
+                    Local Attractions
+                </h4>
+                <div class="list-group">
+                    <f:for each="{attractions}" as="attraction">
+                        <div class="list-group-item border-0 px-0 py-3 d-flex">
+                            <div class="me-3" style="width: 110px;">
+                                <f:if condition="{attraction.image}">
+                                    <f:image image="{attraction.image}" class="img-fluid rounded" alt="{attraction.title}" />
+                                </f:if>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h5 class="mb-1">
+                                    {attraction.title}
+                                </h5>
+                                <div class="small text-muted mb-1">
+                                    <f:render section="CategoryIcon" arguments="{category: attraction.category}" />
+                                    <span class="me-2">
+                                        <f:render section="CategoryLabel" arguments="{category: attraction.category}" />
+                                    </span>
+                                    <f:if condition="{attraction.distanceKm} > 0">
+                                        <span class="me-2">
+                                            • <f:format.number decimals="1">{attraction.distanceKm}</f:format.number> km
+                                        </span>
+                                    </f:if>
+                                </div>
+                                <f:if condition="{attraction.travelTime}">
+                                    <div class="small text-muted mb-1">
+                                        ~{attraction.travelTime}
+                                    </div>
+                                </f:if>
+                                <f:if condition="{attraction.description}">
+                                    <p class="mb-2 small">
+                                        {attraction.description}
+                                    </p>
+                                </f:if>
+                                <f:if condition="{attraction.mapLink}">
+                                    <a href="{attraction.mapLink}" class="btn btn-sm btn-outline-primary" target="_blank" rel="noopener">
+                                        <i class="fa fa-location-dot me-1"></i>
+                                        View on Map
+                                    </a>
+                                </f:if>
+                            </div>
+                        </div>
+                    </f:for>
+                </div>
+            </div>
+        </f:if>
+    </f:then>
+</f:if>
+
+<f:section name="CategoryIcon">
+    <f:switch expression="{category}">
+        <!-- Beach -->
+        <f:case value="beach">
+            <i class="fa fa-umbrella-beach text-primary me-1"></i>
+        </f:case>
+
+        <!-- Landmark -->
+        <f:case value="landmark">
+            <i class="fa fa-landmark text-primary me-1"></i>
+        </f:case>
+
+        <!-- Shopping -->
+        <f:case value="shopping">
+            <i class="fa fa-bag-shopping text-primary me-1"></i>
+        </f:case>
+
+        <!-- Restaurant -->
+        <f:case value="restaurant">
+            <i class="fa fa-utensils text-primary me-1"></i>
+        </f:case>
+
+        <!-- Entertainment -->
+        <f:case value="entertainment">
+            <i class="fa fa-masks-theater text-primary me-1"></i>
+        </f:case>
+
+        <!-- Park & nature -->
+        <f:case value="park">
+            <i class="fa fa-tree text-primary me-1"></i>
+        </f:case>
+
+        <!-- Fallback -->
+        <f:defaultCase>
+            <i class="fa fa-location-dot text-primary me-1"></i>
+        </f:defaultCase>
+    </f:switch>
+</f:section>
+
+<f:section name="CategoryLabel">
+    <f:switch expression="{category}">
+        <f:case value="beach">Beach</f:case>
+        <f:case value="landmark">Landmark</f:case>
+        <f:case value="shopping">Shopping</f:case>
+        <f:case value="restaurant">Restaurant</f:case>
+        <f:case value="entertainment">Entertainment</f:case>
+        <f:case value="park">Park &amp; nature</f:case>
+        <f:defaultCase>Nearby</f:defaultCase>
+    </f:switch>
+</f:section>
+

@@ -1,0 +1,1 @@
+foreach ($room->getOffers() as $offer) {

@@ -12,102 +12,163 @@
         </h1>
       </div>
 
-      <div class="row g-4">
-        <f:for each="{rooms}" as="room" iteration="i">
-          <div
-            class="col-lg-4 col-md-6 wow fadeInUp"
-            data-wow-delay="{i.index * 0.2 + 0.1}s"
-          >
-            <div class="room-item shadow rounded overflow-hidden">
-    <div class="position-relative">
-        <f:if condition="{room.images}">
-            <f:for each="{room.images}" as="image" iteration="it">
-                <f:if condition="{it.isFirst}">
-                    <f:image image="{image}" class="img-fluid" alt="{room.title}" />
-                </f:if>
-            </f:for>
-        </f:if>
-        <small class="position-absolute start-0 top-100 translate-middle-y 
-                       bg-primary text-white rounded py-1 px-3 ms-4">
-            ${room.rent}/Night
-        </small>
-    </div>
-
-    <div class="p-4 mt-2">
-
-        <!-- Title + Star Rating -->
-        <div class="d-flex justify-content-between mb-3">
-            <h5 class="mb-0">{room.title}</h5>
-            <div class="ps-2">
-                <f:for each="{0:1,1:2,2:3,3:4,4:5}" as="star">
-                    <f:if condition="{star} <= {room.rating}">
-                        <small class="fa fa-star text-primary"></small>
-                    </f:if>
-                    <f:if condition="{star} > {room.rating}">
-                        <small class="fa fa-star text-muted"></small>
-                    </f:if>
-                </f:for>
+      <!-- FILTER FORM -->
+      <f:if condition="{currentPage.backend_layout} != 'pagets__hotelier_home'">
+        <div
+          class="filter-bar shadow rounded bg-white p-4 mb-5 wow fadeInUp"
+          data-wow-delay="0.1s"
+          data-ajax-url="{f:uri.page(pageUid: '{page.uid}', additionalParams: {tx_hotelierbooking_rooms: {action: 'ajaxFilter', controller: 'Room'}})}"
+        >
+          <div class="row g-3 align-items-end">
+            <div class="col-md-3">
+              <label class="form-label fw-semibold">
+                <i class="fa fa-calendar text-primary me-1"></i> Check In
+              </label>
+              <input type="date" id="filter-checkin" class="form-control" />
             </div>
-        </div>
-
-        <!-- Beds, Baths, Wifi -->
-        <div class="d-flex flex-wrap mb-3">
-            <small class="border-end me-3 pe-3">
-                <i class="fa fa-bed text-primary me-2"></i>{room.numberOfBeds} Bed
-            </small>
-            <small class="border-end me-3 pe-3">
-                <i class="fa fa-bath text-primary me-2"></i>{room.numberOfBathrooms} Bath
-            </small>
-            <f:if condition="{room.wifiAvailable}">
-                <small class="border-end me-3 pe-3">
-                    <i class="fa fa-wifi text-primary me-2"></i>Wifi
-                </small>
-            </f:if>
-            <f:if condition="{room.acAvailable}">
-                <small>
-                    <i class="fa fa-snowflake text-primary me-2"></i>AC
-                </small>
-            </f:if>
-            <f:if condition="{room.acAvailable} == false">
-                <small>
-                    <i class="fa fa-fan text-muted me-2"></i>Non-AC
-                </small>
-            </f:if>
-        </div>
-
-        <!-- Extra Details -->
-        <div class="d-flex flex-wrap gap-2 mb-3">
-            <span class="badge bg-light text-dark border">
-                <i class="fa fa-expand text-primary me-1"></i>
-                {room.roomSize} sqft
-            </span>
-            <span class="badge bg-light text-dark border">
-                <i class="fa fa-users text-primary me-1"></i>
-                Max {room.maxOccupancy} Guests
-            </span>
-            <span class="badge bg-light text-dark border">
-                <i class="fa fa-door-open text-primary me-1"></i>
-                {room.numberOfRooms} Left
-            </span>
-        </div>
-
-        <p class="text-body mb-3">
-            <f:format.html>{room.description}</f:format.html>
-        </p>
-
-        <div class="d-flex justify-content-between">
-            <f:link.page
-                pageUid="{site.settings.bookingPage}"
-                additionalParams="{tx_hotelierbooking_booking: {room: room.uid}}"
-                class="btn btn-sm btn-dark rounded py-2 px-4">
-                Book Now
-            </f:link.page>
-        </div>
-
-    </div>
-</div>
+            <div class="col-md-3">
+              <label class="form-label fw-semibold">
+                <i class="fa fa-calendar-check text-primary me-1"></i> Check Out
+              </label>
+              <input type="date" id="filter-checkout" class="form-control" />
+            </div>
+            <div class="col-md-3">
+              <label class="form-label fw-semibold">
+                <i class="fa fa-person text-primary me-1"></i> Adults
+              </label>
+              <select id="filter-adults" class="form-select">
+                <option value="0">Any</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label fw-semibold">
+                <i class="fa fa-child text-primary me-1"></i> Children
+              </label>
+              <select id="filter-children" class="form-select">
+                <option value="0">Any</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+              </select>
+            </div>
           </div>
-        </f:for>
+
+          <!-- Active filters summary -->
+          <div id="activeFilters" class="mt-3 pt-3 border-top d-none">
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+              <small class="text-muted fw-semibold">Active filters:</small>
+              <span id="filterBadgeDates" class="badge bg-primary d-none">
+                <i class="fa fa-calendar me-1"></i>
+                <span id="filterBadgeDatesText"></span>
+              </span>
+              <span id="filterBadgeAdults" class="badge bg-primary d-none">
+                <i class="fa fa-person me-1"></i>
+                <span id="filterBadgeAdultsText"></span>
+              </span>
+              <span id="filterBadgeChildren" class="badge bg-primary d-none">
+                <i class="fa fa-child me-1"></i>
+                <span id="filterBadgeChildrenText"></span>
+              </span>
+              <button
+                id="clearFilterBtn"
+                class="btn btn-sm btn-outline-secondary ms-auto"
+              >
+                <i class="fa fa-times me-1"></i> Clear Filters
+              </button>
+            </div>
+          </div>
+        </div>
+      </f:if>
+
+      <!-- Loading spinner -->
+      <div id="roomsLoading" class="text-center py-5 d-none">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="text-muted mt-2">Searching available rooms...</p>
+      </div>
+      <!-- ROOM CARDS WRAPPER — partial renders inside here -->
+      <div id="roomsGrid" class="row g-4">
+        <f:render
+          partial="Room/Cards"
+          arguments="{rooms: rooms, site: site, filterData: filterData, offerPrices: offerPrices, priceBreakdowns: priceBreakdowns}"
+        />
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .price-breakdown-toggle {
+      position: relative;
+      cursor: pointer;
+      font-size: 0.75rem;
+    }
+
+    .price-breakdown-toggle .price-breakdown-panel {
+      position: absolute;
+      left: 0;
+      top: 120%;
+      min-width: 230px;
+      background: #ffffff;
+      border-radius: 0.5rem;
+      box-shadow: 0 0.75rem 1.5rem rgba(15, 23, 42, 0.18);
+      padding: 0.75rem 1rem;
+      z-index: 20;
+      display: none;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+    }
+
+    .price-breakdown-toggle:hover .price-breakdown-panel,
+    .price-breakdown-toggle:focus-within .price-breakdown-panel {
+      display: block;
+    }
+
+    .price-breakdown-panel-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      margin-bottom: 0.2rem;
+      color: #4b5563;
+    }
+
+    .price-breakdown-panel-row strong {
+      color: #111827;
+    }
+  </style>
+
+  <!-- Compare Bar -->
+  <div id="compareBar" class="compare-bar d-none">
+    <div class="compare-bar-inner">
+      <span class="compare-bar-text">
+        <span id="compareCount" class="compare-badge">0</span> Rooms selected
+      </span>
+      <div class="compare-bar-actions">
+        <button id="clearCompare" class="btn btn-sm btn-outline-light me-2">
+          <i class="fa fa-times me-1"></i> Clear
+        </button>
+        <button id="openCompare" class="btn btn-sm btn-primary" disabled>
+          <i class="fa fa-table-columns me-1"></i>
+          Compare Rooms <i class="fa fa-arrow-right ms-1"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Compare Modal -->
+  <div id="compareModal" class="compare-modal-overlay d-none">
+    <div class="compare-modal">
+      <div class="compare-modal-header">
+        <h4 class="mb-0 text-white">
+          <i class="fa fa-table-columns me-2 text-primary"></i>Room Comparison
+        </h4>
+        <button id="closeCompare" class="btn-close btn-close-white"></button>
+      </div>
+      <div class="compare-modal-body">
+        <div id="compareTableWrapper" class="table-responsive"></div>
       </div>
     </div>
   </div>

@@ -76,6 +76,15 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
         $pluginSignature,
         'after:palette:headers'
     );
+
+    ExtensionUtility::registerPlugin(
+        'HotelierBooking',
+        'Offers',
+        'Special Offers Landing Page',
+        'hotelier-booking-room',
+        'Plugins',
+        'Displays active offers grouped by type'
+    );
 })();
 
 

@@ -69,11 +69,13 @@ class BookingController extends ActionController
         $bookingObj->setAdults((int) $booking['adults']);
         $bookingObj->setChildren((int) $booking['children']);
         $bookingObj->setMessage($booking['message']);
+
         $roomUid = (int) ($booking['room'] ?? 0);
         $room = $this->roomRepository->findByUid($roomUid);
 
         if ($room !== null) {
-            // Check availability before booking
+
+            // ── 1. Availability check ──────────────────────────
             if ($room->getNumberOfRooms() <= 0) {
                 $this->addFlashMessage(
                     'Sorry, this room is no longer available.',
@@ -82,21 +84,61 @@ class BookingController extends ActionController
                 );
                 return $this->redirect('form');
             }
+
+            // ── 2. Adults limit ────────────────────────────────
+            if ((int) $booking['adults'] > $room->getMaxAdults()) {
+                $this->addFlashMessage(
+                    'This room allows a maximum of ' . $room->getMaxAdults() . ' adults.',
+                    'Too Many Adults',
+                    \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::ERROR
+                );
+                return $this->redirect('form');
+            }
+
+            // ── 3. Children limit ──────────────────────────────
+            if ((int) $booking['children'] > $room->getMaxChildren()) {
+                $this->addFlashMessage(
+                    'This room allows a maximum of ' . $room->getMaxChildren() . ' children.',
+                    'Too Many Children',
+                    \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::ERROR
+                );
+                return $this->redirect('form');
+            }
+
+            // ── 4. Total occupancy limit ───────────────────────
+            $totalGuests = (int) $booking['adults'] + (int) $booking['children'];
+            if ($totalGuests > $room->getMaxOccupancy()) {
+                $this->addFlashMessage(
+                    'This room allows a maximum of ' . $room->getMaxOccupancy() . ' guests in total.',
+                    'Too Many Guests',
+                    \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::ERROR
+                );
+                return $this->redirect('form');
+            }
+
+            // ── 5. Checkin must be before checkout ─────────────
+            if ($booking['checkin'] >= $booking['checkout']) {
+                $this->addFlashMessage(
+                    'Check-out date must be after check-in date.',
+                    'Invalid Dates',
+                    \TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::ERROR
+                );
+                return $this->redirect('form');
+            }
+
+            // ── All checks passed — save booking ───────────────
             $bookingObj->setRoom($room);
-            // Decrement available rooms
-            $room->setNumberOfRooms($room->getNumberOfRooms() - 1);
-            $this->roomRepository->update($room);
+            $this->roomRepository->update(modifiedObject: $room);
         }
+
         $site = $this->request->getAttribute('site');
-
-        /** @var \TYPO3\CMS\Core\Site\Entity\SiteSettings $settings */
         $settings = $site->getSettings();
-
         $bookingPid = (int) $settings->get('bookingPid');
 
         if ($bookingPid > 0) {
             $bookingObj->_setProperty('pid', $bookingPid);
         }
+
         $this->bookingRepository->add($bookingObj);
         $this->persistenceManager->persistAll();
 

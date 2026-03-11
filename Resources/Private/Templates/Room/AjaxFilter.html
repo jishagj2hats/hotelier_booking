@@ -1,0 +1,15 @@
+<f:if condition="{rooms -> f:count()} > 0">
+    <f:then>
+        <f:render partial="Room/Cards"
+                  arguments="{rooms: rooms, site: site, filterData: filterData, offerPrices:offerPrices, priceBreakdowns: priceBreakdowns}" />
+    </f:then>
+    <f:else>
+        <div class="row g-4 rooms-empty-state">
+            <div class="col-12 text-center py-5">
+                <i class="fa fa-bed fa-3x text-muted mb-3 d-block"></i>
+                <h5 class="text-muted">No rooms found.</h5>
+                <p class="text-muted small mb-0">Try different dates or guest count.</p>
+            </div>
+        </div>
+    </f:else>
+</f:if>

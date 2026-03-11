@@ -3,6 +3,35 @@ plugin.tx_hotelierbooking_rooms.view {
     partialRootPath = EXT:hotelier_booking/Resources/Private/Partials/
     layoutRootPath = EXT:hotelier_booking/Resources/Private/Layouts/
 }
+
+plugin.tx_hotelierbooking_offers.view {
+    templateRootPath = EXT:hotelier_booking/Resources/Private/Templates/
+    partialRootPath = EXT:hotelier_booking/Resources/Private/Partials/
+    layoutRootPath = EXT:hotelier_booking/Resources/Private/Layouts/
+}
+
+# AJAX page type: returns only the room filter partial (no full page wrapper)
+ajax_rooms_filter = PAGE
+ajax_rooms_filter {
+    typeNum = 178965
+    config {
+        disableAllHeaderCode = 1
+        additionalHeaders = Content-Type: text/html; charset=utf-8
+        xhtml_cleaning = 0
+        admPanel = 0
+        debug = 0
+        no_cache = 1
+    }
+    10 = USER
+    10 {
+        userFunc = TYPO3\CMS\Extbase\Core\Bootstrap->run
+        extensionName = HotelierBooking
+        pluginName = Rooms
+        vendorName = Hotelier
+        controller = Room
+        action = ajaxFilter
+    }
+}
 tt_content.list.20.tx_hotelierbooking_rooms {
     dataProcessing {
         10 = TYPO3\CMS\Frontend\DataProcessing\FilesProcessor

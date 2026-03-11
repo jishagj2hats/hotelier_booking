@@ -10,3 +10,13 @@ settings:
     label: 'Bookings Data'
     description: 'Select the folder where the booking form data is stored.'
     default: 0
+  detailPage:
+    type: page
+    label: 'Detail Page'
+    description: 'Select the page where the room details are displayed.'
+    default: 0
+  roomsPage:
+    type: page
+    label: 'Rooms Page'
+    description: 'Select the page where the rooms are displayed.'
+    default: 0

@@ -1,122 +1,230 @@
 <f:layout name="Default" />
 <f:section name="Main">
-<div class="container-xxl py-5">
+  <div class="container-xxl py-5">
     <div class="container">
+      <f:flashMessages />
 
-        <f:flashMessages />
-
-        <!-- SELECTED ROOM PROFILE CARD -->
-        <f:if condition="{selectedRoom}">
-            <div class="card shadow rounded overflow-hidden mb-4">
-                <div class="row g-0 align-items-center">
-
-                    <!-- Room Image -->
-                    <div class="col-md-3">
-                        <f:if condition="{selectedRoom.images}">
-                            <f:for each="{selectedRoom.images}" as="image" iteration="it">
-                                <f:if condition="{it.isFirst}">
-                                    <f:image 
-                                        image="{image}" 
-                                        class="img-fluid w-100"
-                                        style="height: 200px; object-fit: cover;"
-                                        alt="{selectedRoom.title}" />
-                                </f:if>
-                            </f:for>
-                        </f:if>
-                    </div>
-
-                    <!-- Room Details -->
-                    <div class="col-md-9 p-4">
-                        <h4 class="mb-1">{selectedRoom.title}</h4>
-                        <p class="text-primary fw-bold fs-5 mb-2">
-                            ${selectedRoom.rent} / Night
-                        </p>
-                        <div class="d-flex gap-4 mb-2">
-                            <span>
-                                <i class="fa fa-bed text-primary me-2"></i>
-                                {selectedRoom.numberOfBeds} Bed
-                            </span>
-                            <span>
-                                <i class="fa fa-bath text-primary me-2"></i>
-                                {selectedRoom.numberOfBathrooms} Bath
-                            </span>
-                            <f:if condition="{selectedRoom.wifiAvailable}">
-                                <span>
-                                    <i class="fa fa-wifi text-primary me-2"></i> Wifi
-                                </span>
-                            </f:if>
-                        </div>
-                        <p class="text-muted mb-0">
-                            <f:format.html>{selectedRoom.description}</f:format.html>
-                        </p>
-                    </div>
-
-                </div>
-            </div>
-        </f:if>
-
-        <!-- BOOKING FORM — full width -->
-        <f:form action="submit" controller="Booking" class="row g-3" 
-                object="{booking}" objectName="booking">
-
-            <f:form.hidden property="room" value="{selectedRoom.uid}" />
-
-            <div class="col-md-6">
-                <div class="form-floating">
-                    <f:form.textfield class="form-control" id="name" 
-                        property="name" placeholder="Your Name" required="required" />
-                    <label for="name">Your Name</label>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-floating">
-                    <f:form.textfield class="form-control" id="email" 
-                        property="email" placeholder="Your Email" required="required" />
-                    <label for="email">Your Email</label>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-floating">
-                    <f:form.textfield type="datetime-local" class="form-control" 
-                        required="required" property="checkin" />
-                    <label>Check In</label>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-floating">
-                    <f:form.textfield type="datetime-local" class="form-control" 
-                        required="required" property="checkout" />
-                    <label>Check Out</label>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-floating">
-                    <f:form.select class="form-select" id="adults" property="adults"
-                        options="{1:'Adult 1', 2:'Adult 2', 3:'Adult 3'}" />
-                    <label for="adults">Select Adult</label>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-floating">
-                    <f:form.select class="form-select" id="children" property="children"
-                        options="{0:'Child 0', 1:'Child 1', 2:'Child 2'}" />
-                    <label for="children">Select Child</label>
-                </div>
-            </div>
-            <div class="col-12">
-                <div class="form-floating">
-                    <f:form.textarea class="form-control" id="message" 
-                        property="message" style="height: 100px" 
-                        placeholder="Special Request" />
-                    <label for="message">Special Request</label>
-                </div>
-            </div>
-            <div class="col-12">
-                <button class="btn btn-primary w-100 py-3" type="submit">BOOK NOW</button>
+      <!-- SELECTED ROOM PROFILE CARD -->
+      <f:if condition="{selectedRoom}">
+        <div class="card shadow rounded overflow-hidden mb-4">
+          <div class="row g-0 align-items-center">
+            <!-- Room Image -->
+            <div class="col-md-3">
+              <f:if condition="{selectedRoom.images}">
+                <f:for each="{selectedRoom.images}" as="image" iteration="it">
+                  <f:if condition="{it.isFirst}">
+                    <f:image
+                      image="{image}"
+                      class="img-fluid w-100"
+                      style="height: 220px; object-fit: cover"
+                      alt="{selectedRoom.title}"
+                    />
+                  </f:if>
+                </f:for>
+              </f:if>
             </div>
 
-        </f:form>
+            <!-- Room Details -->
+            <div class="col-md-9 p-4">
+              <h4 class="mb-1">{selectedRoom.title}</h4>
 
+              <!-- Price — offer or regular -->
+              <f:if condition="{selectedRoom.activeOfferPrice}">
+                <f:then>
+                  <p class="mb-2">
+                    <span
+                      class="text-muted text-decoration-line-through me-2 fs-6"
+                    >
+                      ${selectedRoom.rent}/Night
+                    </span>
+                    <span class="text-danger fw-bold fs-5">
+                      ${selectedRoom.activeOfferPrice}/Night
+                    </span>
+                    <span class="badge bg-danger ms-1">Special Offer</span>
+                  </p>
+                </f:then>
+                <f:else>
+                  <p class="text-primary fw-bold fs-5 mb-2">
+                    ${selectedRoom.rent}/Night
+                  </p>
+                </f:else>
+              </f:if>
+
+              <!-- Beds, Baths, Wifi, AC -->
+              <div class="d-flex flex-wrap gap-3 mb-2">
+                <span>
+                  <i class="fa fa-bed text-primary me-1"></i>
+                  {selectedRoom.numberOfBeds} Bed
+                </span>
+                <span>
+                  <i class="fa fa-bath text-primary me-1"></i>
+                  {selectedRoom.numberOfBathrooms} Bath
+                </span>
+                <f:if condition="{selectedRoom.wifiAvailable}">
+                  <span>
+                    <i class="fa fa-wifi text-primary me-1"></i> Wifi
+                  </span>
+                </f:if>
+                <f:if condition="{selectedRoom.acAvailable}">
+                  <span>
+                    <i class="fa fa-snowflake text-primary me-1"></i> AC
+                  </span>
+                </f:if>
+              </div>
+
+              <!-- Occupancy badges -->
+              <div class="d-flex flex-wrap gap-2 mb-3">
+                <span class="badge bg-light text-dark border">
+                  <i class="fa fa-expand text-primary me-1"></i>
+                  {selectedRoom.roomSize} sqft
+                </span>
+
+                <span
+                  class="badge bg-light text-dark border"
+                  data-bs-toggle="tooltip"
+                  title="Max {selectedRoom.maxAdults} Adults &amp; {selectedRoom.maxChildren} Children"
+                >
+                  <i class="fa fa-users text-primary me-1"></i>
+                  Max {selectedRoom.maxOccupancy} Guests
+                </span>
+              </div>
+
+              <p class="text-muted mb-0 small">
+                <f:format.html>{selectedRoom.description}</f:format.html>
+              </p>
+            </div>
+          </div>
+        </div>
+      </f:if>
+
+      <!-- BOOKING FORM -->
+      <f:form
+        action="submit"
+        controller="Booking"
+        class="row g-3"
+        object="{booking}"
+        objectName="booking"
+        data-max-adults="{selectedRoom.maxAdults}"
+        data-max-children="{selectedRoom.maxChildren}"
+        data-max-occupancy="{selectedRoom.maxOccupancy}"
+      >
+        <f:form.hidden property="room" value="{selectedRoom.uid}" />
+
+        <!-- Name -->
+        <div class="col-md-6">
+          <div class="form-floating">
+            <f:form.textfield
+              class="form-control"
+              id="name"
+              property="name"
+              placeholder="Your Name"
+              required="required"
+            />
+            <label for="name">Your Name</label>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="col-md-6">
+          <div class="form-floating">
+            <f:form.textfield
+              class="form-control"
+              id="email"
+              property="email"
+              placeholder="Your Email"
+              required="required"
+            />
+            <label for="email">Your Email</label>
+          </div>
+        </div>
+
+        <!-- Check In -->
+        <div class="col-md-6">
+          <div class="form-floating">
+            <f:form.textfield
+              type="datetime-local"
+              class="form-control"
+              required="required"
+              property="checkin"
+              id="checkin"
+            />
+            <label for="checkin">Check In</label>
+          </div>
+        </div>
+
+        <!-- Check Out -->
+        <div class="col-md-6">
+          <div class="form-floating">
+            <f:form.textfield
+              type="datetime-local"
+              class="form-control"
+              required="required"
+              property="checkout"
+              id="checkout"
+            />
+            <label for="checkout">Check Out</label>
+          </div>
+        </div>
+
+        <!-- Adults -->
+        <div class="col-md-6">
+          <div class="form-floating">
+            <f:form.select
+              class="form-select"
+              id="adults"
+              property="adults"
+              options="{1:'1 Adult', 2:'2 Adults', 3:'3 Adults', 4:'4 Adults'}"
+            />
+            <label for="adults">Select Adults</label>
+          </div>
+          <f:if condition="{selectedRoom.maxAdults}">
+            <small class="text-muted ms-1">
+              <i class="fa fa-circle-info text-primary me-1"></i>
+              Max {selectedRoom.maxAdults} adults allowed
+            </small>
+          </f:if>
+        </div>
+
+        <!-- Children -->
+        <div class="col-md-6">
+          <div class="form-floating">
+            <f:form.select
+              class="form-select"
+              id="children"
+              property="children"
+              options="{0:'0 Children', 1:'1 Child', 2:'2 Children', 3:'3 Children'}"
+            />
+            <label for="children">Select Children</label>
+          </div>
+          <f:if condition="{selectedRoom.maxChildren}">
+            <small class="text-muted ms-1">
+              <i class="fa fa-circle-info text-primary me-1"></i>
+              Max {selectedRoom.maxChildren} children allowed
+            </small>
+          </f:if>
+        </div>
+
+        <!-- Special Request -->
+        <div class="col-12">
+          <div class="form-floating">
+            <f:form.textarea
+              class="form-control"
+              id="message"
+              property="message"
+              style="height: 100px"
+              placeholder="Special Request"
+            />
+            <label for="message">Special Request</label>
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <div class="col-12">
+          <button class="btn btn-primary w-100 py-3" type="submit">
+            <i class="fa fa-calendar-check me-2"></i>BOOK NOW
+          </button>
+        </div>
+      </f:form>
     </div>
-</div>
+  </div>
 </f:section>

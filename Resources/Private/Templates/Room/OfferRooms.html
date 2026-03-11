@@ -1,0 +1,58 @@
+<f:layout name="Default" />
+
+<f:section name="Main">
+  <div class="container-xxl py-5">
+    <div class="container">
+
+      <!-- Offer banner -->
+      <div class="offer-banner rounded p-4 mb-5 text-white"
+           style="background: linear-gradient(135deg, #e63946, #c1121f);">
+        <div class="d-flex align-items-center justify-content-between">
+          <div>
+            <h2 class="mb-1">{activeOffer.title}</h2>
+            <p class="mb-0 opacity-75">{activeOffer.shortDescription}</p>
+          </div>
+          <div class="text-end">
+            <f:if condition="{activeOffer.discountType} == 'percentage'">
+              <span class="display-5 fw-bold">
+                {activeOffer.discountValue}% OFF
+              </span>
+            </f:if>
+            <f:if condition="{activeOffer.discountType} == 'fixed'">
+              <span class="display-5 fw-bold">
+                ₹{activeOffer.discountValue} OFF
+              </span>
+            </f:if>
+            <f:if condition="{activeOffer.validUntil}">
+              <p class="mb-0 small mt-1 opacity-75">
+                <i class="fa fa-clock me-1"></i>
+                Valid until
+                <f:format.date format="d M Y">{activeOffer.validUntil}</f:format.date>
+              </p>
+            </f:if>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rooms grid -->
+      <div class="text-center mb-4">
+        <h4>Rooms available with this offer</h4>
+      </div>
+
+      <f:if condition="{rooms -> f:count()} == 0">
+        <div class="text-center py-5">
+          <i class="fa fa-door-open fa-3x text-muted mb-3 d-block"></i>
+          <h5 class="text-muted">No rooms available for this offer.</h5>
+        </div>
+      </f:if>
+
+      <div id="roomsGrid" class="row g-4">
+        <f:render partial="Room/Cards"
+                  arguments="{rooms: rooms, site: site,
+                              filterData: filterData,
+                              offerPrices: offerPrices}" />
+      </div>
+
+    </div>
+  </div>
+</f:section>

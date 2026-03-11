@@ -1,0 +1,148 @@
+<f:layout name="Default" />
+
+<f:section name="Main">
+  <div class="container-xxl py-5">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-lg-7">
+          <div class="mb-4">
+            <h1 class="mb-1">{room.title}</h1>
+            <div class="d-flex align-items-center gap-3">
+              <div>
+                <f:for each="{0:1,1:2,2:3,3:4,4:5}" as="star">
+                  <f:if condition="{star} <= {room.rating}">
+                    <small class="fa fa-star text-primary"></small>
+                  </f:if>
+                  <f:if condition="{star} > {room.rating}">
+                    <small class="fa fa-star text-muted"></small>
+                  </f:if>
+                </f:for>
+              </div>
+              <span class="text-muted small">
+                {room.numberOfBeds} Bed • {room.numberOfBathrooms} Bath •
+                {room.roomSize} sqft
+              </span>
+            </div>
+
+            <div class="mt-2">
+              <span class="badge bg-light text-dark border">
+                <i class="fa fa-door-open text-primary me-1"></i>
+                <span>
+                  <f:if condition="{room.numberOfRooms} == 1">
+                    <f:then>{room.numberOfRooms} Room</f:then>
+                    <f:else>{room.numberOfRooms} Rooms</f:else>
+                  </f:if>
+                </span>
+                <span class="ms-1 text-muted">
+                  <f:if condition="{room.numberOfRooms} == 0">
+                    <f:then>• Sold Out</f:then>
+                    <f:else>
+                      <f:if condition="{room.numberOfRooms} == 1">
+                        <f:then>• Only 1 Room Left</f:then>
+                        <f:else>
+                          <f:if condition="{room.numberOfRooms} <= 4">
+                            <f:then>• High Demand</f:then>
+                            <f:else>• Available</f:else>
+                          </f:if>
+                        </f:else>
+                      </f:if>
+                    </f:else>
+                  </f:if>
+                </span>
+              </span>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <f:if condition="{room.images}">
+              <f:for each="{room.images}" as="image" iteration="it">
+                <f:if condition="{it.isFirst}">
+                  <f:image image="{image}" class="img-fluid rounded w-100" alt="{room.title}" />
+                </f:if>
+              </f:for>
+            </f:if>
+          </div>
+
+          <div class="mb-4">
+            <h4>Description</h4>
+            <p class="text-body">
+              <f:format.html>{room.description}</f:format.html>
+            </p>
+          </div>
+
+          <!-- Full attractions section -->
+          <f:render
+            partial="Room/Attractions"
+            arguments="{attractions: room.attractions, mode: 'full'}"
+          />
+        </div>
+
+        <div class="col-lg-5">
+          <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+              <h4 class="card-title mb-3">Price per Night</h4>
+              <f:if condition="{offerPrice}">
+                <f:then>
+                  <div class="mb-2">
+                    <span class="text-muted text-decoration-line-through me-2">
+                      ₹<f:format.number decimals="0" thousandsSeparator=",">{room.rent}</f:format.number>
+                    </span>
+                    <span class="h3 text-danger mb-0">
+                      ₹<f:format.number decimals="0" thousandsSeparator=",">{offerPrice}</f:format.number>
+                    </span>
+                  </div>
+                </f:then>
+                <f:else>
+                  <div class="mb-2">
+                    <span class="h3 text-primary mb-0">
+                      ₹<f:format.number decimals="0" thousandsSeparator=",">{priceBreakdown.base}</f:format.number>
+                    </span>
+                  </div>
+                </f:else>
+              </f:if>
+
+              <div class="small text-muted mb-3">
+                <div class="d-flex justify-content-between">
+                  <span>Base</span>
+                  <span>₹<f:format.number decimals="0" thousandsSeparator=",">{priceBreakdown.base}</f:format.number></span>
+                </div>
+                <f:if condition="{priceBreakdown.discount} > 0">
+                  <div class="d-flex justify-content-between text-success">
+                    <span>Discount</span>
+                    <span>-₹<f:format.number decimals="0" thousandsSeparator=",">{priceBreakdown.discount}</f:format.number></span>
+                  </div>
+                </f:if>
+                <f:if condition="{priceBreakdown.gstRate} > 0">
+                  <div class="d-flex justify-content-between">
+                    <span>GST ({priceBreakdown.gstRate}% )</span>
+                    <span>₹<f:format.number decimals="0" thousandsSeparator=",">{priceBreakdown.gst}</f:format.number></span>
+                  </div>
+                </f:if>
+                <f:if condition="{priceBreakdown.serviceRate} > 0">
+                  <div class="d-flex justify-content-between">
+                    <span>Service charge ({priceBreakdown.serviceRate}% )</span>
+                    <span>₹<f:format.number decimals="0" thousandsSeparator=",">{priceBreakdown.service}</f:format.number></span>
+                  </div>
+                </f:if>
+                <hr />
+                <div class="d-flex justify-content-between fw-bold">
+                  <span>Total per night</span>
+                  <span>₹<f:format.number decimals="0" thousandsSeparator=",">{priceBreakdown.total}</f:format.number></span>
+                </div>
+              </div>
+
+              <f:link.page
+                pageUid="{site.settings.bookingPage}"
+                additionalParams="{tx_hotelierbooking_booking: {room: room.uid}}"
+                class="btn btn-dark w-100 mt-2"
+              >
+                <i class="fa fa-calendar-check me-1"></i> Book Now
+              </f:link.page>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</f:section>
+

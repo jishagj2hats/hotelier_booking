@@ -1,0 +1,60 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<article class="offer-card"
+         data-offer-type="{offer.offerType}"
+         data-offer-valid-until="{offer.validUntil}"
+         data-offer-now="{now}">
+    <div class="offer-card__media">
+        <f:if condition="{offer.image}">
+            <f:for each="{offer.image}" as="image" iteration="it">
+                <f:if condition="{it.isFirst}">
+                    <f:image image="{image}" maxWidth="800" alt="{offer.title}" />
+                </f:if>
+            </f:for>
+        </f:if>
+        <div class="offer-card__badge">
+            <f:if condition="{offer.discountType} == 'percentage'">
+                <f:then>{offer.discountValue}% OFF</f:then>
+                <f:else>₹{offer.discountValue} OFF</f:else>
+            </f:if>
+        </div>
+    </div>
+
+    <div class="offer-card__body">
+        <h3 class="offer-card__title">{offer.title}</h3>
+        <p class="offer-card__short">{offer.shortDescription}</p>
+
+        <p class="offer-card__countdown" data-offer-countdown>
+            <f:if condition="{offer.validUntil}">
+                <f:then>Offer ends soon</f:then>
+                <f:else></f:else>
+            </f:if>
+        </p>
+
+        <div class="offer-card__actions">
+            <f:if condition="{offer.applyGlobally}">
+    <f:then>
+        <!-- Global offer → show all rooms -->
+        <f:link.page
+            pageUid="{site.settings.roomsPage}"
+            class="offer-card__cta btn btn-primary">
+            View Rooms
+        </f:link.page>
+    </f:then>
+    <f:else>
+        <!-- Specific offer → filter by offer uid -->
+        <f:link.page
+            pageUid="{site.settings.roomsPage}"
+            additionalParams="{tx_hotelierbooking_rooms: {action: 'offerRooms', controller: 'Room', offer: offer.uid}}"
+            class="offer-card__cta btn btn-primary">
+            View Rooms
+        </f:link.page>
+    </f:else>
+</f:if>
+        </div>
+    </div>
+</article>
+
+</html>
+

@@ -6,6 +6,8 @@ namespace Hotelier\HotelierBooking\Domain\Model;
 use TYPO3\CMS\Extbase\Domain\Model\FileReference;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
+use Hotelier\HotelierBooking\Domain\Model\Attraction;
+use Hotelier\HotelierBooking\Domain\Model\Offer;
 
 class Room extends AbstractEntity
 {
@@ -21,11 +23,28 @@ class Room extends AbstractEntity
     protected int $maxOccupancy = 1;
     protected bool $acAvailable = false;
     protected int $rating = 5;
+    protected int $maxAdults = 2;
+    protected int $maxChildren = 2;
+    protected float $offerPrice = 0.0;
+    protected int $offerFrom = 0;
+    protected int $offerUntil = 0;
+    protected float $gstRate = 18.0;
+    protected float $serviceChargeRate = 10.0;
 
     /**
      * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\TYPO3\CMS\Extbase\Domain\Model\FileReference>
      */
     protected $images;
+
+    /**
+     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Hotelier\HotelierBooking\Domain\Model\Attraction>
+     */
+    protected $attractions;
+
+    /**
+     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Hotelier\HotelierBooking\Domain\Model\Offer>
+     */
+    protected $offers;
 
     public function getTitle(): string
     {
@@ -34,7 +53,15 @@ class Room extends AbstractEntity
     public function __construct()
     {
         $this->images = new ObjectStorage();
+        $this->attractions = new ObjectStorage();
+        $this->offers = new ObjectStorage();
     }
+    public function initializeObject(): void
+{
+    $this->images = $this->images ?? new ObjectStorage();
+    $this->attractions = $this->attractions ?? new ObjectStorage();
+    $this->offers = $this->offers ?? new ObjectStorage();
+}
     public function setTitle(string $title): void
     {
         $this->title = $title;
@@ -181,5 +208,146 @@ class Room extends AbstractEntity
     public function setRating(int $rating): void
     {
         $this->rating = $rating;
+    }
+    public function getMaxAdults(): int
+    {
+        return $this->maxAdults;
+    }
+
+    public function setMaxAdults(int $maxAdults): void
+    {
+        $this->maxAdults = $maxAdults;
+    }
+
+    public function getMaxChildren(): int
+    {
+        return $this->maxChildren;
+    }
+
+    public function setMaxChildren(int $maxChildren): void
+    {
+        $this->maxChildren = $maxChildren;
+    }
+    public function getOfferPrice(): float
+    {
+        return $this->offerPrice;
+    }
+
+    public function setOfferPrice(float $offerPrice): void
+    {
+        $this->offerPrice = $offerPrice;
+    }
+
+    public function getOfferUntil(): int
+    {
+        return $this->offerUntil;
+    }
+
+    public function setOfferUntil(int $offerUntil): void
+    {
+        $this->offerUntil = $offerUntil;
+    }
+
+    public function getOfferFrom(): int
+    {
+        return $this->offerFrom;
+    }
+    public function setOfferFrom(int $offerFrom): void
+    {
+        $this->offerFrom = $offerFrom;
+    }
+
+    // ✅ Updated: active only between offerFrom and offerUntil
+    public function getActiveOfferPriceForDate(?int $timestamp = null): ?float
+    {
+        if ($this->offerPrice <= 0) {
+            return null;
+        }
+        $checkTime = $timestamp ?? time();
+        if ($this->offerFrom > 0 && $checkTime < $this->offerFrom) {
+            return null;
+        }
+        if ($this->offerUntil > 0 && $checkTime > $this->offerUntil) {
+            return null;
+        }
+        return $this->offerPrice;
+    }
+
+    // Update existing method
+    public function getActiveOfferPrice(): ?float
+    {
+        return $this->getActiveOfferPriceForDate(time());
+    }
+
+
+    public function getEffectivePrice(): float
+    {
+        return $this->getActiveOfferPrice() ?? $this->rent;
+    }
+
+    public function getGstRate(): float
+    {
+        return $this->gstRate;
+    }
+
+    public function setGstRate(float $gstRate): void
+    {
+        $this->gstRate = $gstRate;
+    }
+
+    public function getServiceChargeRate(): float
+    {
+        return $this->serviceChargeRate;
+    }
+
+    public function setServiceChargeRate(float $serviceChargeRate): void
+    {
+        $this->serviceChargeRate = $serviceChargeRate;
+    }
+
+    /**
+     * @return \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Hotelier\HotelierBooking\Domain\Model\Attraction>
+     */
+    public function getAttractions(): \TYPO3\CMS\Extbase\Persistence\ObjectStorage
+    {
+        return $this->attractions;
+    }
+
+    public function setAttractions(\TYPO3\CMS\Extbase\Persistence\ObjectStorage $attractions): void
+    {
+        $this->attractions = $attractions;
+    }
+
+    public function addAttraction(Attraction $attraction): void
+    {
+        $this->attractions->attach($attraction);
+    }
+
+    public function removeAttraction(Attraction $attraction): void
+    {
+        $this->attractions->detach($attraction);
+    }
+
+    public function getOffers(): \TYPO3\CMS\Extbase\Persistence\ObjectStorage
+{
+    if ($this->offers === null) {
+        $this->offers = new ObjectStorage();
+    }
+    return $this->offers;
+}
+
+    public function setOffers(\TYPO3\CMS\Extbase\Persistence\ObjectStorage $offers): void
+    {
+        $this->offers = $offers;
+    }
+
+    public function addOffer(Offer $offer): void
+    {
+        $this->offers->attach($offer);
+    }
+
+    public function removeOffer(Offer $offer): void
+    {
+        $this->offers->detach($offer);
     }
 }

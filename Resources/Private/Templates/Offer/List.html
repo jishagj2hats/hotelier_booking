@@ -1,0 +1,38 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:asset.script identifier="hotelier-booking-offer-countdown"
+                src="EXT:hotelier_booking/Resources/Public/JavaScript/offer-countdown.js" />
+
+<section class="offers-landing">
+    <div class="offers-tabs">
+        <button type="button" class="offers-tab is-active" data-offer-filter="all">All Offers</button>
+        <button type="button" class="offers-tab" data-offer-filter="flash">Flash Deals</button>
+        <button type="button" class="offers-tab" data-offer-filter="weekend">Weekend Flash</button>
+        <button type="button" class="offers-tab" data-offer-filter="seasonal">Seasonal</button>
+        <button type="button" class="offers-tab" data-offer-filter="member">Member Only</button>
+        <button type="button" class="offers-tab" data-offer-filter="general">General</button>
+    </div>
+
+    <div class="offers-sections">
+        <f:for each="{groupedOffers}" as="offersByType" key="type">
+            <div class="offers-section" data-offer-section="{type}" style="{f:if(condition: '{type} == all', then: '', else: 'display:none')}">
+                <f:if condition="{offersByType -> f:count()}">
+                    <f:then>
+                        <div class="offers-grid">
+                            <f:for each="{offersByType}" as="offer">
+                                <f:render partial="Offer/Card" arguments="{offer: offer, now: now, site: site}" />
+                            </f:for>
+                        </div>
+                    </f:then>
+                    <f:else>
+                        <p class="offers-empty">No offers in this category right now.</p>
+                    </f:else>
+                </f:if>
+            </div>
+        </f:for>
+    </div>
+</section>
+
+</html>
+
