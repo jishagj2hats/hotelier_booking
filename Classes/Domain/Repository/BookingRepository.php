@@ -27,4 +27,52 @@ class BookingRepository extends Repository
 
         return $rows ?: [];
     }
+
+    // ── Count bookings in last 24 hours ───────────────────
+    public function countBookingsLast24Hours(int $roomUid): int
+    {
+        $since = time() - 86400;
+
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getQueryBuilderForTable('tx_hotelierbooking_domain_model_booking');
+
+        return (int) $queryBuilder
+            ->count('uid')
+            ->from('tx_hotelierbooking_domain_model_booking')
+            ->where(
+                $queryBuilder->expr()->eq(
+                    'room',
+                    $queryBuilder->createNamedParameter($roomUid, Connection::PARAM_INT)
+                ),
+                $queryBuilder->expr()->gte(
+                    'crdate',
+                    $queryBuilder->createNamedParameter($since, Connection::PARAM_INT)
+                )
+            )
+            ->executeQuery()
+            ->fetchOne();
+    }
+
+    // ── Get timestamp of last booking ─────────────────────
+    public function getLastBookingTime(int $roomUid): ?int
+    {
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getQueryBuilderForTable('tx_hotelierbooking_domain_model_booking');
+
+        $result = $queryBuilder
+            ->select('crdate')
+            ->from('tx_hotelierbooking_domain_model_booking')
+            ->where(
+                $queryBuilder->expr()->eq(
+                    'room',
+                    $queryBuilder->createNamedParameter($roomUid, Connection::PARAM_INT)
+                )
+            )
+            ->orderBy('crdate', 'DESC')
+            ->setMaxResults(1)
+            ->executeQuery()
+            ->fetchOne();
+
+        return $result ? (int) $result : null;
+    }
 }

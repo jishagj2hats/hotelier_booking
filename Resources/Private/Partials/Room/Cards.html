@@ -3,6 +3,7 @@
   <f:for each="{rooms}" as="room" iteration="i">
     <f:variable name="offerPrice" value="{offerPrices.{room.uid}}" />
     <f:variable name="priceBreakdown" value="{priceBreakdowns.{room.uid}}" />
+    <f:variable name="activityMsg" value="{activityMessages.{room.uid}}" />
     <div
       class="col-lg-4 col-md-6 wow fadeInUp"
       data-wow-delay="{i.index * 0.2 + 0.1}s"
@@ -271,7 +272,13 @@
               </span>
             </span>
           </div>
-
+          <f:if condition="{activityMsg}">
+            <div class="mb-2">
+              <small class="text-danger fw-semibold">
+                <i class="fas fa-fire me-1"></i>{activityMsg}
+              </small>
+            </div>
+          </f:if>
           <f:variable name="plainDesc">
             <f:format.stripTags>{room.description}</f:format.stripTags>
           </f:variable>

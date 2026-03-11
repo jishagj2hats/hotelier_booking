@@ -55,6 +55,7 @@ class RoomController extends ActionController
             'currentPage' => $currentPage,
             'offerPrices' => $this->buildOfferPrices($rooms->toArray()),
             'priceBreakdowns' => $this->buildPriceBreakdowns($rooms->toArray()),
+            'activityMessages' => $this->buildActivityMessages($rooms->toArray()),
         ]);
 
         return $this->htmlResponse();
@@ -84,6 +85,7 @@ class RoomController extends ActionController
             'filterData' => $filterData,
             'offerPrices' => $this->buildOfferPrices($rooms, $checkinTimestamp),
             'priceBreakdowns' => $this->buildPriceBreakdowns($rooms, $checkinTimestamp),
+            'activityMessages' => $this->buildActivityMessages($rooms),
         ]);
         return $this->htmlResponse();
     }
@@ -135,6 +137,7 @@ class RoomController extends ActionController
             'filterData' => $filterData,
             'offerPrices' => $this->buildOfferPrices($rooms, $checkinTimestamp),
             'priceBreakdowns' => $this->buildPriceBreakdowns($rooms, $checkinTimestamp),
+            'activityMessages' => $this->buildActivityMessages($rooms),
         ]);
 
         return $this->htmlResponse();
@@ -186,30 +189,56 @@ class RoomController extends ActionController
         return $breakdowns;
     }
     public function offerRoomsAction(int $offer): \Psr\Http\Message\ResponseInterface
-{
-    $site = $this->request->getAttribute('site');
+    {
+        $site = $this->request->getAttribute('site');
 
-    // Get the offer
-    $offerObject = $this->offerRepository->findByUid($offer);
+        // Get the offer
+        $offerObject = $this->offerRepository->findByUid($offer);
 
-    if (!$offerObject) {
-        // Offer not found → redirect to list
-        return $this->redirect('list');
+        if (!$offerObject) {
+            // Offer not found → redirect to list
+            return $this->redirect('list');
+        }
+
+        // Get only rooms linked to this offer
+        $rooms = $offerObject->getRooms()->toArray();
+
+
+        $this->view->assignMultiple([
+            'rooms' => $rooms,
+            'site' => $site,
+            'filterData' => [],
+            'activeOffer' => $offerObject,
+            'offerPrices' => $this->buildOfferPrices($rooms),
+            'priceBreakdowns' => $this->buildPriceBreakdowns($rooms),
+        ]);
+
+        return $this->htmlResponse();
     }
+    private function buildActivityMessages(array $rooms): array
+    {
+        $messages = [];
+        foreach ($rooms as $room) {
+            $uid = $room->getUid();
+            $count = $this->bookingRepository->countBookingsLast24Hours($uid);
+            $lastTime = $this->bookingRepository->getLastBookingTime($uid);
+            $msg = '';
 
-    // Get only rooms linked to this offer
-    $rooms = $offerObject->getRooms()->toArray();
+            if ($count >= 3) {
+                $msg = 'Booked ' . $count . ' times in last 24 hours';
+            } elseif ($lastTime) {
+                $diff = time() - $lastTime;
+                if ($diff < 3600) {
+                    $mins = max(1, (int) ($diff / 60));
+                    $msg = 'Last booked ' . $mins . ' minute' . ($mins > 1 ? 's' : '') . ' ago';
+                } elseif ($diff < 86400) {
+                    $hours = (int) ($diff / 3600);
+                    $msg = 'Last booked ' . $hours . ' hour' . ($hours > 1 ? 's' : '') . ' ago';
+                }
+            }
 
-
-    $this->view->assignMultiple([
-        'rooms'       => $rooms,
-        'site'        => $site,
-        'filterData'  => [],
-        'activeOffer' => $offerObject,
-        'offerPrices' => $this->buildOfferPrices($rooms),
-        'priceBreakdowns' => $this->buildPriceBreakdowns($rooms),
-    ]);
-
-    return $this->htmlResponse();
-}
+            $messages[$uid] = $msg;
+        }
+        return $messages;
+    }
 }
