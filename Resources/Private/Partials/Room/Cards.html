@@ -2,10 +2,7 @@
 <div class="row g-4">
   <f:for each="{rooms}" as="room" iteration="i">
     <f:variable name="offerPrice" value="{offerPrices.{room.uid}}" />
-    <f:variable
-      name="priceBreakdown"
-      value="{priceBreakdowns.{room.uid}}"
-    />
+    <f:variable name="priceBreakdown" value="{priceBreakdowns.{room.uid}}" />
     <div
       class="col-lg-4 col-md-6 wow fadeInUp"
       data-wow-delay="{i.index * 0.2 + 0.1}s"
@@ -27,22 +24,41 @@
       >
         <div class="position-relative">
           <f:if condition="{room.images}">
-            <f:for each="{room.images}" as="image" iteration="it">
-              <f:if condition="{it.isFirst}">
-                <f:link.page
-                  pageUid="{site.settings.roomsPage}"
-                  additionalParams="{tx_hotelierbooking_rooms: {action: 'show', controller: 'Room', room: room.uid}}"
-                  class="d-block"
+            <f:then>
+              <f:for each="{room.images}" as="image" iteration="it">
+                <f:if condition="{it.isFirst}">
+                  <f:link.page
+                    pageUid="{site.settings.roomsPage}"
+                    additionalParams="{tx_hotelierbooking_rooms: {action: 'show', controller: 'Room', room: room.uid}}"
+                    class="d-block"
+                  >
+                    <f:image
+                      image="{image}"
+                      class="img-fluid"
+                      alt="{room.title}"
+                      data-room-image="1"
+                    />
+                  </f:link.page>
+                </f:if>
+              </f:for>
+            </f:then>
+            <f:else>
+              <f:link.page
+                pageUid="{site.settings.roomsPage}"
+                additionalParams="{tx_hotelierbooking_rooms: {action: 'show', controller: 'Room', room: room.uid}}"
+                class="d-block"
+              >
+                <div
+                  class="bg-light d-flex align-items-center justify-content-center"
+                  style="height: 220px"
                 >
-                  <f:image
-                    image="{image}"
-                    class="img-fluid"
-                    alt="{room.title}"
-                    data-room-image="1"
-                  />
-                </f:link.page>
-              </f:if>
-            </f:for>
+                  <div class="text-center text-muted">
+                    <i class="fa fa-image fa-3x mb-2 d-block"></i>
+                    <small>No Image</small>
+                  </div>
+                </div>
+              </f:link.page>
+            </f:else>
           </f:if>
 
           <!-- Price + transparent breakdown (per night) -->
@@ -177,14 +193,11 @@
               <i class="fa fa-tag me-1"></i> Special Offer
             </span>
           </f:if>
-
         </div>
 
         <div class="p-4 mt-2">
           <div class="d-flex justify-content-between mb-3">
-            <h5 class="mb-0">
-              {room.title}
-            </h5>
+            <h5 class="mb-0">{room.title}</h5>
             <div class="ps-2">
               <f:for each="{0:1,1:2,2:3,3:4,4:5}" as="star">
                 <f:if condition="{star} <= {room.rating}">
@@ -259,8 +272,13 @@
             </span>
           </div>
 
-          <p class="text-body mb-3">
-            <f:format.html>{room.description}</f:format.html>
+          <f:variable name="plainDesc">
+            <f:format.stripTags>{room.description}</f:format.stripTags>
+          </f:variable>
+          <p class="text-body mb-3 room-desc">
+            <f:format.crop maxCharacters="120" append="..."
+              >{plainDesc}</f:format.crop
+            >
           </p>
 
           <!-- Nearby attractions compact badges -->
@@ -272,7 +290,11 @@
             <!-- String for comparison table: e.g. 'Beach 5min, Restaurant 2min' -->
             <div class="d-none" data-room-attractions-labels>
               <f:for each="{room.attractions}" as="attraction" iteration="it">
-                <f:render section="CategoryLabel" partial="Room/Attractions" arguments="{category: attraction.category}" />
+                <f:render
+                  section="CategoryLabel"
+                  partial="Room/Attractions"
+                  arguments="{category: attraction.category}"
+                />
                 <f:if condition="{attraction.suggestedLabel}">
                   <f:then> {attraction.suggestedLabel}</f:then>
                   <f:else> {attraction.title}</f:else>
@@ -291,7 +313,7 @@
               Book Now
             </f:link.page>
 
-            <div class="compare-check-wrapper m-0 d-flex align-items-center">
+            <div class="m-0">
               <input
                 class="btn-check compare-checkbox"
                 type="checkbox"
@@ -300,12 +322,15 @@
                 autocomplete="off"
               />
               <label
-                class="btn btn-sm btn-outline-secondary d-flex align-items-center px-3 py-1"
+                class="compare-pill"
                 for="compare-{room.uid}"
                 title="Add to comparison"
               >
-                <span class="compare-label compare-label-unchecked small fw-semibold">
-                  [ ⇄ Compare ]
+                <span class="compare-pill-unchecked">
+                  <i class="fas fa-exchange-alt me-1"></i> Compare
+                </span>
+                <span class="compare-pill-checked">
+                  <i class="fa fa-check me-1"></i> Comparing
                 </span>
               </label>
             </div>
