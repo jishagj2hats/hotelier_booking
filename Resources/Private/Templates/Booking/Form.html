@@ -105,9 +105,14 @@
                 </span>
               </div>
 
-              <p class="text-muted mb-0 small">
-                <f:format.html>{selectedRoom.description}</f:format.html>
-              </p>
+              <f:variable name="plainDesc">
+            <f:format.stripTags>{selectedRoom.description}</f:format.stripTags>
+          </f:variable>
+          <p class="text-muted mb-0 small">
+            <f:format.crop maxCharacters="120" append="..."
+              >{plainDesc}</f:format.crop
+            >
+          </p>
             </div>
           </div>
         </div>

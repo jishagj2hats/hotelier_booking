@@ -93,15 +93,23 @@ class RoomController extends ActionController
     public function showAction(\Hotelier\HotelierBooking\Domain\Model\Room $room): \Psr\Http\Message\ResponseInterface
     {
         $site = $this->request->getAttribute('site');
-        $offerPrices = $this->buildOfferPrices([$room]);
-        $priceBreakdowns = $this->buildPriceBreakdowns([$room]);
+
+        // Check if coming from an offer page — if so, show future offer prices too
+        $fromOffer = $this->request->hasArgument('offer')
+            && (int) $this->request->getArgument('offer') > 0;
+        $offerPrices = $this->buildOfferPrices([$room], null, $fromOffer);
+        $priceBreakdowns = $this->buildPriceBreakdowns([$room], null, $fromOffer);
+        $offerObject = $this->offerService->findBestOfferForRoom($room, time(), $fromOffer);
 
         $this->view->assignMultiple([
             'room' => $room,
             'site' => $site,
             'offerPrice' => $offerPrices[$room->getUid()] ?? null,
             'priceBreakdown' => $priceBreakdowns[$room->getUid()] ?? null,
+            'fromOffer' => $fromOffer,
+            'activeOffer' => $offerObject,
         ]);
+
         return $this->htmlResponse();
     }
 
@@ -204,8 +212,6 @@ class RoomController extends ActionController
 
         // Get only rooms linked to this offer
         $rooms = $offerObject->getRooms()->toArray();
-
-        // debug($this->buildOfferPrices($rooms));
         $this->view->assignMultiple([
             'rooms' => $rooms,
             'site' => $site,

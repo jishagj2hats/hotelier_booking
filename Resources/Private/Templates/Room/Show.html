@@ -57,7 +57,11 @@
             <f:if condition="{room.images}">
               <f:for each="{room.images}" as="image" iteration="it">
                 <f:if condition="{it.isFirst}">
-                  <f:image image="{image}" class="img-fluid rounded w-100" alt="{room.title}" />
+                  <f:image
+                    image="{image}"
+                    class="img-fluid rounded w-100"
+                    alt="{room.title}"
+                  />
                 </f:if>
               </f:for>
             </f:if>
@@ -85,17 +89,23 @@
                 <f:then>
                   <div class="mb-2">
                     <span class="text-muted text-decoration-line-through me-2">
-                      ₹<f:format.number decimals="0" thousandsSeparator=",">{room.rent}</f:format.number>
+                      ₹<f:format.number decimals="0" thousandsSeparator=","
+                        >{room.rent}</f:format.number
+                      >
                     </span>
                     <span class="h3 text-danger mb-0">
-                      ₹<f:format.number decimals="0" thousandsSeparator=",">{offerPrice}</f:format.number>
+                      ₹<f:format.number decimals="0" thousandsSeparator=","
+                        >{offerPrice}</f:format.number
+                      >
                     </span>
                   </div>
                 </f:then>
                 <f:else>
                   <div class="mb-2">
                     <span class="h3 text-primary mb-0">
-                      ₹<f:format.number decimals="0" thousandsSeparator=",">{priceBreakdown.base}</f:format.number>
+                      ₹<f:format.number decimals="0" thousandsSeparator=","
+                        >{priceBreakdown.base}</f:format.number
+                      >
                     </span>
                   </div>
                 </f:else>
@@ -104,33 +114,80 @@
               <div class="small text-muted mb-3">
                 <div class="d-flex justify-content-between">
                   <span>Base</span>
-                  <span>₹<f:format.number decimals="0" thousandsSeparator=",">{priceBreakdown.base}</f:format.number></span>
+                  <span
+                    >₹<f:format.number decimals="0" thousandsSeparator=","
+                      >{priceBreakdown.base}</f:format.number
+                    ></span
+                  >
                 </div>
                 <f:if condition="{priceBreakdown.discount} > 0">
                   <div class="d-flex justify-content-between text-success">
                     <span>Discount</span>
-                    <span>-₹<f:format.number decimals="0" thousandsSeparator=",">{priceBreakdown.discount}</f:format.number></span>
+                    <span
+                      >-₹<f:format.number decimals="0" thousandsSeparator=","
+                        >{priceBreakdown.discount}</f:format.number
+                      ></span
+                    >
                   </div>
                 </f:if>
                 <f:if condition="{priceBreakdown.gstRate} > 0">
                   <div class="d-flex justify-content-between">
                     <span>GST ({priceBreakdown.gstRate}% )</span>
-                    <span>₹<f:format.number decimals="0" thousandsSeparator=",">{priceBreakdown.gst}</f:format.number></span>
+                    <span
+                      >₹<f:format.number decimals="0" thousandsSeparator=","
+                        >{priceBreakdown.gst}</f:format.number
+                      ></span
+                    >
                   </div>
                 </f:if>
                 <f:if condition="{priceBreakdown.serviceRate} > 0">
                   <div class="d-flex justify-content-between">
                     <span>Service charge ({priceBreakdown.serviceRate}% )</span>
-                    <span>₹<f:format.number decimals="0" thousandsSeparator=",">{priceBreakdown.service}</f:format.number></span>
+                    <span
+                      >₹<f:format.number decimals="0" thousandsSeparator=","
+                        >{priceBreakdown.service}</f:format.number
+                      ></span
+                    >
                   </div>
                 </f:if>
                 <hr />
                 <div class="d-flex justify-content-between fw-bold">
                   <span>Total per night</span>
-                  <span>₹<f:format.number decimals="0" thousandsSeparator=",">{priceBreakdown.total}</f:format.number></span>
+                  <span
+                    >₹<f:format.number decimals="0" thousandsSeparator=","
+                      >{priceBreakdown.total}</f:format.number
+                    ></span
+                  >
                 </div>
               </div>
-
+              <f:if condition="{fromOffer}">
+                <div class="alert alert-warning py-2 small mb-3">
+                  <i class="fas fa-clock me-1"></i>
+                  <strong>Upcoming Offer:</strong> {activeOffer.title} —
+                  <f:if condition="{activeOffer.validFrom} > 0">
+                    Valid from
+                    <strong>
+                      <f:format.date
+                        format="d M Y"
+                        base="{activeOffer.validFrom}"
+                        >@{activeOffer.validFrom}</f:format.date
+                      >
+                    </strong>
+                  </f:if>
+                  <f:if condition="{activeOffer.validUntil} > 0">
+                    to
+                    <strong>
+                      <f:format.date
+                        format="d M Y"
+                        base="{activeOffer.validUntil}"
+                        >@{activeOffer.validUntil}</f:format.date
+                      >
+                    </strong>
+                  </f:if>
+                  — current bookings are charged at full rate until the offer
+                  starts.
+                </div>
+              </f:if>
               <f:link.page
                 pageUid="{site.settings.bookingPage}"
                 additionalParams="{tx_hotelierbooking_booking: {room: room.uid}}"
@@ -145,4 +202,3 @@
     </div>
   </div>
 </f:section>
-

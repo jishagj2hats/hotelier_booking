@@ -110,7 +110,7 @@
               </f:if>
             </div>
           </div>
-          <f:debug>{offerPrice}</f:debug>
+          
           <!-- Price block -->
           <div
             class="orc-price-block {f:if(condition: '{offerPrice}', then: 'orc-price-block--offer', else: '')}"
@@ -264,14 +264,28 @@
           >
             <i class="fas fa-calendar-check me-2"></i>Book Now
           </f:link.page>
-
-          <f:link.page
-            pageUid="{site.settings.roomsPage}"
-            additionalParams="{tx_hotelierbooking_rooms: {action: 'show', controller: 'Room', room: room.uid}}"
-            class="orc-btn-detail"
-          >
-            <i class="fas fa-eye me-2"></i>View Details
-          </f:link.page>
+          <!-- When on offer page — activeOffer exists -->
+          <f:if condition="{activeOffer}">
+            <f:then>
+              <f:link.page
+                pageUid="{site.settings.roomsPage}"
+                additionalParams="{tx_hotelierbooking_rooms: {action: 'show', controller: 'Room', room: room.uid, offer: activeOffer.uid}}"
+                class="orc-btn-detail"
+              >
+                <i class="fas fa-eye me-2"></i>View Details
+              </f:link.page>
+            </f:then>
+            <f:else>
+              <!-- When on rooms list page — no offer context -->
+              <f:link.page
+                pageUid="{site.settings.roomsPage}"
+                additionalParams="{tx_hotelierbooking_rooms: {action: 'show', controller: 'Room', room: room.uid}}"
+                class="orc-btn-detail"
+              >
+                <i class="fas fa-eye me-2"></i>View Details
+              </f:link.page>
+            </f:else>
+          </f:if>
 
           <!-- Compare -->
           <f:if condition="{rooms -> f:count()} > 1">
