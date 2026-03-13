@@ -1,39 +1,73 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
       data-namespace-typo3-fluid="true">
 
+<f:layout name="Default" />
+
+<f:section name="Main">
+
 <f:asset.script identifier="hotelier-booking-offer-countdown"
-                src="EXT:hotelier_booking/Resources/Public/JavaScript/offer-countdown.js" />
+    src="EXT:hotelier_booking/Resources/Public/JavaScript/offer-countdown.js" />
 
-<section class="offers-landing">
-    <div class="offers-tabs">
-        <button type="button" class="offers-tab is-active" data-offer-filter="all">All Offers</button>
-        <button type="button" class="offers-tab" data-offer-filter="flash">Flash Deals</button>
-        <button type="button" class="offers-tab" data-offer-filter="weekend">Weekend Flash</button>
-        <button type="button" class="offers-tab" data-offer-filter="seasonal">Seasonal</button>
-        <button type="button" class="offers-tab" data-offer-filter="member">Member Only</button>
-        <button type="button" class="offers-tab" data-offer-filter="general">General</button>
+<!-- Page Header -->
+<div class="offers-hero">
+    <div class="offers-hero__inner">
+        <p class="offers-hero__eyebrow">Limited Time</p>
+        <h1 class="offers-hero__title">Exclusive Offers</h1>
+        <p class="offers-hero__sub">Hand-picked deals crafted for an unforgettable stay</p>
     </div>
+</div>
 
-    <div class="offers-sections">
+<!-- Filter Tabs -->
+<div class="offers-tabs-bar">
+    <div class="container">
+        <div class="offers-tabs-scroll">
+            <button type="button" class="offers-tab is-active" data-offer-filter="all">
+                <i class="fas fa-layer-group me-2"></i>All Offers
+            </button>
+            <button type="button" class="offers-tab" data-offer-filter="flash">
+                <i class="fas fa-bolt me-2"></i>Flash Deals
+            </button>
+            <button type="button" class="offers-tab" data-offer-filter="weekend">
+                <i class="fas fa-calendar-week me-2"></i>Weekend Flash
+            </button>
+            <button type="button" class="offers-tab" data-offer-filter="seasonal">
+                <i class="fas fa-sun me-2"></i>Seasonal
+            </button>
+            <button type="button" class="offers-tab" data-offer-filter="general">
+                <i class="fas fa-tag me-2"></i>General
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Offers Content -->
+<div class="offers-body">
+    <div class="container">
         <f:for each="{groupedOffers}" as="offersByType" key="type">
-            <div class="offers-section" data-offer-section="{type}" style="{f:if(condition: '{type} == all', then: '', else: 'display:none')}">
+            <div class="offers-section" data-offer-section="{type}"
+                 style="{f:if(condition: '{type} == all', then: 'display:block', else: 'display:none')}">
                 <f:if condition="{offersByType -> f:count()}">
                     <f:then>
                         <div class="offers-grid">
                             <f:for each="{offersByType}" as="offer">
-                                <f:render partial="Offer/Card" arguments="{offer: offer, now: now, site: site}" />
+                                <f:render partial="Offer/Card"
+                                          arguments="{offer: offer, now: now, site: site}" />
                             </f:for>
                         </div>
                     </f:then>
                     <f:else>
-                        <p class="offers-empty">No offers in this category right now.</p>
+                        <div class="offers-empty">
+                            <i class="fas fa-tag offers-empty__icon"></i>
+                            <h4>No offers right now</h4>
+                            <p>Check back soon for exciting deals in this category.</p>
+                        </div>
                     </f:else>
                 </f:if>
             </div>
         </f:for>
     </div>
-</section>
+</div>
 
+
+</f:section>
 </html>
-
-

@@ -2,7 +2,23 @@
 <f:section name="Main">
   <div class="container-xxl py-5">
     <div class="container">
-      <f:flashMessages />
+      <f:if condition="{showSuccess}">
+    <f:flashMessages as="flashMessages">
+        <f:if condition="{flashMessages.0}">
+            <div class="alert {f:if(condition: '{flashMessages.0.severity} == 0', then: 'alert-success', else: 'alert-danger')} mb-4"
+                 id="bookingSuccess"
+                 data-redirect="{f:uri.page(pageUid: redirectPage)}">
+                <div class="d-flex align-items-start gap-3">
+                    <i class="fas {f:if(condition: '{flashMessages.0.severity} == 0', then: 'fa-check-circle', else: 'fa-exclamation-circle')} fa-lg mt-1 flex-shrink-0"></i>
+                    <div>
+                        <strong>{flashMessages.0.title}</strong><br>
+                        {flashMessages.0.message}
+                    </div>
+                </div>
+            </div>
+        </f:if>
+    </f:flashMessages>
+</f:if>
 
       <!-- SELECTED ROOM PROFILE CARD -->
       <f:if condition="{selectedRoom}">

@@ -218,27 +218,34 @@ class RoomController extends ActionController
     private function buildActivityMessages(array $rooms): array
     {
         $messages = [];
+        $now = time();
+
         foreach ($rooms as $room) {
             $uid = $room->getUid();
             $count = $this->bookingRepository->countBookingsLast24Hours($uid);
-            $lastTime = $this->bookingRepository->getLastBookingTime($uid);
-            $msg = '';
+            $lastBooked = $this->bookingRepository->getLastBookingTime($uid);
 
             if ($count >= 3) {
-                $msg = 'Booked ' . $count . ' times in last 24 hours';
-            } elseif ($lastTime) {
-                $diff = time() - $lastTime;
-                if ($diff < 3600) {
-                    $mins = max(1, (int) ($diff / 60));
-                    $msg = 'Last booked ' . $mins . ' minute' . ($mins > 1 ? 's' : '') . ' ago';
-                } elseif ($diff < 86400) {
-                    $hours = (int) ($diff / 3600);
-                    $msg = 'Last booked ' . $hours . ' hour' . ($hours > 1 ? 's' : '') . ' ago';
-                }
-            }
+                // High activity — always show
+                $messages[$uid] = "Booked {$count} times in the last 24 hours";
 
-            $messages[$uid] = $msg;
+            } elseif ($lastBooked) {
+                $diffMinutes = (int) (($now - $lastBooked) / 60);
+
+                if ($diffMinutes < 60) {
+                    // Under 1 hour — very urgent
+                    $messages[$uid] = "Last booked {$diffMinutes} minute" . ($diffMinutes !== 1 ? 's' : '') . " ago";
+
+                } elseif ($diffMinutes < 180) {
+                    // Under 3 hours — still urgent
+                    $hours = (int) ($diffMinutes / 60);
+                    $messages[$uid] = "Last booked {$hours} hour" . ($hours !== 1 ? 's' : '') . " ago";
+
+                }
+                // Beyond 3 hours → show nothing, not urgent enough
+            }
         }
+
         return $messages;
     }
 }

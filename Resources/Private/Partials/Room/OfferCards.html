@@ -1,0 +1,298 @@
+<f:for each="{rooms}" as="room" iteration="i">
+  <f:variable name="offerPrice" value="{offerPrices.{room.uid}}" />
+  <f:variable name="priceBreakdown" value="{priceBreakdowns.{room.uid}}" />
+  <f:variable name="activityMsg" value="{activityMessages.{room.uid}}" />
+
+  <div class="col-12 wow fadeInUp" data-wow-delay="{i.index * 0.1}s">
+    <div
+      class="orc-card"
+      data-room-uid="{room.uid}"
+      data-room-title="{room.title}"
+      data-room-rent="{room.rent}"
+      data-room-size="{room.roomSize}"
+      data-room-beds="{room.numberOfBeds}"
+      data-room-baths="{room.numberOfBathrooms}"
+      data-room-wifi="{room.wifiAvailable}"
+      data-room-ac="{room.acAvailable}"
+      data-room-occupancy="{room.maxOccupancy}"
+      data-room-rooms="{room.numberOfRooms}"
+      data-room-rating="{room.rating}"
+    >
+      <!-- ── Left: Image ── -->
+      <div class="orc-image-wrap">
+        <f:if condition="{room.images}">
+          <f:then>
+            <f:for each="{room.images}" as="image" iteration="it">
+              <f:if condition="{it.isFirst}">
+                <f:link.page
+                  pageUid="{site.settings.roomsPage}"
+                  additionalParams="{tx_hotelierbooking_rooms: {action: 'show', controller: 'Room', room: room.uid}}"
+                  class="d-block h-100"
+                >
+                  <f:image
+                    image="{image}"
+                    class="orc-image"
+                    alt="{room.title}"
+                  />
+                </f:link.page>
+              </f:if>
+            </f:for>
+          </f:then>
+          <f:else>
+            <div class="orc-image-placeholder">
+              <i class="fas fa-bed"></i>
+            </div>
+          </f:else>
+        </f:if>
+
+        <!-- Offer badge -->
+        <f:if condition="{priceBreakdown.discount} > 0">
+          <span class="orc-offer-tag">
+            <i class="fas fa-tag me-1"></i>Special Offer
+          </span>
+        </f:if>
+
+        <!-- Rating overlay -->
+        <div class="orc-rating">
+          <f:for each="{0:1,1:2,2:3,3:4,4:5}" as="star">
+            <f:if condition="{star} <= {room.rating}">
+              <i class="fas fa-star"></i>
+            </f:if>
+            <f:if condition="{star} > {room.rating}">
+              <i class="far fa-star"></i>
+            </f:if>
+          </f:for>
+        </div>
+      </div>
+
+      <!-- ── Right: Details ── -->
+      <div class="orc-body">
+        <!-- Top row: title + price -->
+        <div class="orc-header">
+          <div class="orc-header__left">
+            <f:link.page
+              pageUid="{site.settings.roomsPage}"
+              additionalParams="{tx_hotelierbooking_rooms: {action: 'show', controller: 'Room', room: room.uid}}"
+              class="orc-title-link"
+            >
+              <h4 class="orc-title">{room.title}</h4>
+            </f:link.page>
+
+            <!-- Amenities row -->
+            <div class="orc-amenities">
+              <span class="orc-amenity">
+                <i class="fas fa-bed"></i> {room.numberOfBeds} Bed
+              </span>
+              <span class="orc-amenity-divider"></span>
+              <span class="orc-amenity">
+                <i class="fas fa-bath"></i> {room.numberOfBathrooms} Bath
+              </span>
+              <span class="orc-amenity-divider"></span>
+              <f:if condition="{room.acAvailable}">
+                <f:then>
+                  <span class="orc-amenity">
+                    <i class="fas fa-snowflake"></i> AC
+                  </span>
+                </f:then>
+                <f:else>
+                  <span class="orc-amenity orc-amenity--muted">
+                    <i class="fas fa-fan"></i> Non-AC
+                  </span>
+                </f:else>
+              </f:if>
+              <f:if condition="{room.wifiAvailable}">
+                <span class="orc-amenity-divider"></span>
+                <span class="orc-amenity">
+                  <i class="fas fa-wifi"></i> Wifi
+                </span>
+              </f:if>
+            </div>
+          </div>
+
+          <!-- Price block -->
+          <div
+            class="orc-price-block {f:if(condition: '{offerPrice}', then: 'orc-price-block--offer', else: '')}"
+          >
+            <f:if condition="{offerPrice}">
+              <f:then>
+                <span class="orc-price-original">
+                  ₹<f:format.number decimals="0" thousandsSeparator=","
+                    >{room.rent}</f:format.number
+                  >
+                </span>
+                <span class="orc-price-current">
+                  ₹<f:format.number decimals="0" thousandsSeparator=","
+                    >{offerPrice}</f:format.number
+                  >
+                </span>
+              </f:then>
+              <f:else>
+                <span class="orc-price-current">
+                  ₹<f:format.number decimals="0" thousandsSeparator=","
+                    >{f:if(condition: '{priceBreakdown}', then:
+                    priceBreakdown.base, else: room.rent)}</f:format.number
+                  >
+                </span>
+              </f:else>
+            </f:if>
+            <span class="orc-price-label">per night</span>
+          </div>
+        </div>
+
+        <!-- Badges row -->
+        <div class="orc-badges">
+          <span class="orc-badge">
+            <i class="fas fa-expand-arrows-alt"></i> {room.roomSize} sqft
+          </span>
+          <span
+            class="orc-badge"
+            title="Max {room.maxAdults} Adults &amp; {room.maxChildren} Children"
+          >
+            <i class="fas fa-users"></i> Max {room.maxOccupancy} Guests
+          </span>
+          <span
+            class="orc-badge {f:if(condition: '{room.numberOfRooms} <= 1', then: 'orc-badge--urgent', else: '')}"
+          >
+            <i class="fas fa-door-open"></i>
+            <f:if condition="{room.numberOfRooms} == 0">
+              <f:then>Sold Out</f:then>
+              <f:else>
+                {room.numberOfRooms}
+                <f:if condition="{room.numberOfRooms} == 1">
+                  <f:then>Room Left</f:then>
+                  <f:else>Rooms</f:else>
+                </f:if>
+              </f:else>
+            </f:if>
+          </span>
+        </div>
+
+        <!-- Activity message -->
+        <f:if condition="{activityMsg}">
+          <div class="orc-activity">
+            <i class="fas fa-fire"></i> {activityMsg}
+          </div>
+        </f:if>
+
+        <!-- Description -->
+        <f:variable name="plainDesc">
+          <f:format.stripTags>{room.description}</f:format.stripTags>
+        </f:variable>
+        <p class="orc-desc">
+          <f:format.crop maxCharacters="140" append="..."
+            >{plainDesc}</f:format.crop
+          >
+        </p>
+
+        <!-- Attractions -->
+        <f:if condition="{room.attractions}">
+          <div class="orc-attractions">
+            <f:render
+              partial="Room/Attractions"
+              arguments="{attractions: room.attractions, mode: 'compact'}"
+            />
+          </div>
+        </f:if>
+
+        <!-- Price breakdown (inline, always visible) -->
+        <div class="orc-breakdown">
+          <div class="orc-breakdown__row">
+            <span>Base rate</span>
+            <span
+              >₹<f:format.number decimals="0" thousandsSeparator=","
+                >{priceBreakdown.base}</f:format.number
+              ></span
+            >
+          </div>
+          <f:if condition="{priceBreakdown.discount} > 0">
+            <div class="orc-breakdown__row orc-breakdown__row--discount">
+              <span><i class="fas fa-tag me-1"></i>Offer discount</span>
+              <span
+                >−₹<f:format.number decimals="0" thousandsSeparator=","
+                  >{priceBreakdown.discount}</f:format.number
+                ></span
+              >
+            </div>
+          </f:if>
+          <f:if condition="{priceBreakdown.gstRate} > 0">
+            <div class="orc-breakdown__row">
+              <span
+                >GST (<f:format.number decimals="0"
+                  >{priceBreakdown.gstRate}</f:format.number
+                >%)</span
+              >
+              <span
+                >₹<f:format.number decimals="0" thousandsSeparator=","
+                  >{priceBreakdown.gst}</f:format.number
+                ></span
+              >
+            </div>
+          </f:if>
+          <f:if condition="{priceBreakdown.serviceRate} > 0">
+            <div class="orc-breakdown__row">
+              <span
+                >Service charge (<f:format.number decimals="0"
+                  >{priceBreakdown.serviceRate}</f:format.number
+                >%)</span
+              >
+              <span
+                >₹<f:format.number decimals="0" thousandsSeparator=","
+                  >{priceBreakdown.service}</f:format.number
+                ></span
+              >
+            </div>
+          </f:if>
+          <div class="orc-breakdown__divider"></div>
+          <div class="orc-breakdown__row orc-breakdown__row--total">
+            <span>Total per night</span>
+            <strong
+              >₹<f:format.number decimals="0" thousandsSeparator=","
+                >{priceBreakdown.total}</f:format.number
+              ></strong
+            >
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="orc-actions">
+          <f:link.page
+            pageUid="{site.settings.bookingPage}"
+            additionalParams="{tx_hotelierbooking_booking: {room: room.uid}}"
+            class="orc-btn-book"
+          >
+            <i class="fas fa-calendar-check me-2"></i>Book Now
+          </f:link.page>
+
+          <f:link.page
+            pageUid="{site.settings.roomsPage}"
+            additionalParams="{tx_hotelierbooking_rooms: {action: 'show', controller: 'Room', room: room.uid}}"
+            class="orc-btn-detail"
+          >
+            <i class="fas fa-eye me-2"></i>View Details
+          </f:link.page>
+
+          <!-- Compare -->
+          <f:if condition="{rooms -> f:count()} > 1">
+            <div class="ms-auto">
+              <input
+                class="btn-check compare-checkbox"
+                type="checkbox"
+                id="orc-compare-{room.uid}"
+                data-uid="{room.uid}"
+                autocomplete="off"
+              />
+              <label class="compare-pill" for="orc-compare-{room.uid}">
+                <span class="compare-pill-unchecked">
+                  <i class="fas fa-exchange-alt me-1"></i> Compare
+                </span>
+                <span class="compare-pill-checked">
+                  <i class="fas fa-check me-1"></i> Comparing
+                </span>
+              </label>
+            </div>
+          </f:if>
+        </div>
+      </div>
+    </div>
+  </div>
+</f:for>

@@ -1,58 +1,159 @@
-<f:layout name="Default" />
+<!-- Offer Rooms Hero — wavy split style -->
+<div class="orh-wrap">
+    <div class="container-fluid px-0">
+        <div class="orh-card">
 
-<f:section name="Main">
-  <div class="container-xxl py-5">
+            <!-- Back link -->
+            <f:link.page pageUid="{site.settings.offersPage}" class="orh-back">
+                <i class="fas fa-arrow-left me-2"></i>All Offers
+            </f:link.page>
+
+            <!-- Left: wavy image -->
+            <div class="orh-image-side">
+                <f:if condition="{activeOffer.image}">
+                    <f:then>
+                        <f:for each="{activeOffer.image}" as="image" iteration="it">
+                            <f:if condition="{it.isFirst}">
+                                <f:image image="{image}" class="orh-image" alt="{activeOffer.title}" />
+                            </f:if>
+                        </f:for>
+                    </f:then>
+                    <f:else>
+                        <div class="orh-image-placeholder">
+                            <i class="fas fa-hotel"></i>
+                        </div>
+                    </f:else>
+                </f:if>
+
+                <!-- Wave overlay -->
+                <div class="orh-wave"></div>
+
+                <!-- Discount circle -->
+                <div class="orh-discount">
+                    <span class="orh-discount__up">UP TO</span>
+                    <span class="orh-discount__value">
+                        <f:if condition="{activeOffer.discountType} == 'percentage'">
+                            <f:then>
+                                <f:format.number decimals="0">{activeOffer.discountValue}</f:format.number>%
+                            </f:then>
+                            <f:else>
+                                ₹<f:format.number decimals="0">{activeOffer.discountValue}</f:format.number>
+                            </f:else>
+                        </f:if>
+                    </span>
+                    <span class="orh-discount__off">OFF</span>
+                </div>
+            </div>
+
+            <!-- Right: content -->
+            <div class="orh-content-side">
+
+                <!-- Type badge -->
+                <span class="orh-type orh-type--{activeOffer.offerType}">
+                    <f:if condition="{activeOffer.offerType} == 'flash'">
+                        <i class="fas fa-bolt me-1"></i> Flash Deal
+                    </f:if>
+                    <f:if condition="{activeOffer.offerType} == 'weekend'">
+                        <i class="fas fa-calendar-week me-1"></i> Weekend Flash
+                    </f:if>
+                    <f:if condition="{activeOffer.offerType} == 'seasonal'">
+                        <i class="fas fa-sun me-1"></i> Seasonal
+                    </f:if>
+                    <f:if condition="{activeOffer.offerType} == 'general'">
+                        <i class="fas fa-tag me-1"></i> Special Offer
+                    </f:if>
+                </span>
+
+                <h1 class="orh-title">{activeOffer.title}</h1>
+                <p class="orh-desc">{activeOffer.shortDescription}</p>
+
+                <!-- Meta -->
+                <div class="orh-meta">
+                    <f:if condition="{activeOffer.validFrom}">
+                        <div class="orh-meta__item">
+                            <i class="fas fa-calendar-alt orh-meta__icon"></i>
+                            <div>
+                                <span class="orh-meta__label">Valid From</span>
+                                <span class="orh-meta__value">
+                                    <f:format.date format="d M Y">@{activeOffer.validFrom}</f:format.date>
+                                </span>
+                            </div>
+                        </div>
+                    </f:if>
+                    <f:if condition="{activeOffer.validUntil}">
+                        <div class="orh-meta__item">
+                            <i class="fas fa-calendar-check orh-meta__icon"></i>
+                            <div>
+                                <span class="orh-meta__label">Valid Until</span>
+                                <span class="orh-meta__value">
+                                    <f:format.date format="d M Y">@{activeOffer.validUntil}</f:format.date>
+                                </span>
+                            </div>
+                        </div>
+                    </f:if>
+                    <f:if condition="{activeOffer.usageLimit} > 0">
+                        <div class="orh-meta__item orh-meta__item--usage">
+                            <i class="fas fa-ticket-alt orh-meta__icon"></i>
+                            <div>
+                                <span class="orh-meta__label">Limited</span>
+                                <span class="orh-meta__value">{activeOffer.usageLimit} uses only</span>
+                            </div>
+                        </div>
+                    </f:if>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="orh-rooms-section">
     <div class="container">
 
-      <!-- Offer banner -->
-      <div class="offer-banner rounded p-3 mb-5 text-white"
-           style="background: linear-gradient(135deg, #FEA116, #FEA116);">
-        <div class="d-flex align-items-center justify-content-between">
-          <div>
-            <h2 class="mb-1">{activeOffer.title}</h2>
-            <p class="mb-0 opacity-75">{activeOffer.shortDescription}</p>
-          </div>
-          <div class="text-end">
-            <f:if condition="{activeOffer.discountType} == 'percentage'">
-              <span class="display-5 fw-bold">
-                {activeOffer.discountValue}% OFF
-              </span>
-            </f:if>
-            <f:if condition="{activeOffer.discountType} == 'fixed'">
-              <span class="display-5 fw-bold">
-                ₹{activeOffer.discountValue} OFF
-              </span>
-            </f:if>
-            <f:if condition="{activeOffer.validUntil}">
-              <p class="mb-0 small mt-1 opacity-75">
-                <i class="fa fa-clock me-1"></i>
-                Valid until
-                <f:format.date format="d M Y">{activeOffer.validUntil}</f:format.date>
-              </p>
-            </f:if>
-          </div>
+        <!-- Heading bar -->
+        <div class="orh-rooms-heading">
+            <div>
+                <h4 class="orh-rooms-heading__title">
+                    <i class="fas fa-door-open me-2 text-warning"></i>
+                    Rooms available with this offer
+                </h4>
+                <p class="orh-rooms-heading__sub">
+                    All prices shown include the offer discount applied automatically
+                </p>
+            </div>
+            <span class="orh-rooms-heading__count">
+                {rooms -> f:count()}
+                <f:if condition="{rooms -> f:count()} == 1">
+                    <f:then>Room</f:then>
+                    <f:else>Rooms</f:else>
+                </f:if>
+            </span>
         </div>
-      </div>
 
-      <!-- Rooms grid -->
-      <div class="text-center mb-4">
-        <h4>Rooms available with this offer</h4>
-      </div>
+        <!-- Empty state -->
+        <f:if condition="{rooms -> f:count()} == 0">
+            <div class="orh-rooms-empty">
+                <i class="fas fa-door-open orh-rooms-empty__icon"></i>
+                <h5>No rooms available for this offer</h5>
+                <p>Check back soon or browse all our rooms.</p>
+                <f:link.page pageUid="{site.settings.roomsPage}"
+                             class="btn btn-dark px-4 py-2 mt-2 rounded-pill">
+                    <i class="fas fa-th me-2"></i>Browse All Rooms
+                </f:link.page>
+            </div>
+        </f:if>
 
-      <f:if condition="{rooms -> f:count()} == 0">
-        <div class="text-center py-5">
-          <i class="fa fa-door-open fa-3x text-muted mb-3 d-block"></i>
-          <h5 class="text-muted">No rooms available for this offer.</h5>
+        <!-- Room cards -->
+        <div id="roomsGrid" class="row g-4">
+            <f:render partial="Room/OfferCards"
+                      arguments="{
+                          rooms: rooms,
+                          site: site,
+                          filterData: filterData,
+                          offerPrices: offerPrices,
+                          priceBreakdowns: priceBreakdowns,
+                          activityMessages: activityMessages
+                      }" />
         </div>
-      </f:if>
-
-      <div id="roomsGrid" class="row g-4">
-        <f:render partial="Room/Cards"
-                  arguments="{rooms: rooms, site: site,
-                              filterData: filterData,
-                              offerPrices: offerPrices}" />
-      </div>
 
     </div>
-  </div>
-</f:section>
+</div>

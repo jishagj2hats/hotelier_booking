@@ -1,60 +1,148 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
       data-namespace-typo3-fluid="true">
 
-<article class="offer-card"
+<article class="offer-card offer-card--{offer.offerType}"
          data-offer-type="{offer.offerType}"
          data-offer-valid-until="{offer.validUntil}"
          data-offer-now="{now}">
+
+    <!-- Type ribbon -->
+    <div class="offer-card__ribbon">
+        <f:if condition="{offer.offerType} == 'flash'">
+            <i class="fas fa-bolt me-1"></i> Flash Deal
+        </f:if>
+        <f:if condition="{offer.offerType} == 'weekend'">
+            <i class="fas fa-calendar-week me-1"></i> Weekend Flash
+        </f:if>
+        <f:if condition="{offer.offerType} == 'seasonal'">
+            <i class="fas fa-sun me-1"></i> Seasonal
+        </f:if>
+        <f:if condition="{offer.offerType} == 'general'">
+            <i class="fas fa-tag me-1"></i> Special Offer
+        </f:if>
+    </div>
+
+    <!-- Image -->
     <div class="offer-card__media">
         <f:if condition="{offer.image}">
-            <f:for each="{offer.image}" as="image" iteration="it">
-                <f:if condition="{it.isFirst}">
-                    <f:image image="{image}" maxWidth="800" alt="{offer.title}" />
-                </f:if>
-            </f:for>
+            <f:then>
+                <f:for each="{offer.image}" as="image" iteration="it">
+                    <f:if condition="{it.isFirst}">
+                        <f:image image="{image}" class="offer-card__image"
+                                 maxWidth="800" alt="{offer.title}" />
+                    </f:if>
+                </f:for>
+            </f:then>
+            <f:else>
+                <div class="offer-card__image-placeholder">
+                    <i class="fas fa-percentage"></i>
+                </div>
+            </f:else>
         </f:if>
+
+        <!-- Discount badge overlay -->
         <div class="offer-card__badge">
             <f:if condition="{offer.discountType} == 'percentage'">
-                <f:then>{offer.discountValue}% OFF</f:then>
-                <f:else>₹{offer.discountValue} OFF</f:else>
+                <f:then>
+                    <span class="offer-card__badge-value">
+                        <f:format.number decimals="0">{offer.discountValue}</f:format.number>%
+                    </span>
+                    <span class="offer-card__badge-label">OFF</span>
+                </f:then>
+                <f:else>
+                    <span class="offer-card__badge-value">
+                        Rs.<f:format.number decimals="0">{offer.discountValue}</f:format.number>
+                    </span>
+                    <span class="offer-card__badge-label">OFF</span>
+                </f:else>
             </f:if>
         </div>
     </div>
 
+    <!-- Body -->
     <div class="offer-card__body">
+
         <h3 class="offer-card__title">{offer.title}</h3>
         <p class="offer-card__short">{offer.shortDescription}</p>
 
-        <p class="offer-card__countdown" data-offer-countdown>
-            <f:if condition="{offer.validUntil}">
-                <f:then>Offer ends soon</f:then>
-                <f:else></f:else>
+        <!-- Validity meta -->
+        <div class="offer-card__meta">
+            <f:if condition="{offer.validFrom}">
+                <span class="offer-card__meta-item">
+                    <i class="fas fa-calendar-alt me-1"></i>
+                    From <f:format.date format="d M Y">@{offer.validFrom}</f:format.date>
+                </span>
             </f:if>
-        </p>
+            <f:if condition="{offer.validUntil}">
+                <span class="offer-card__meta-item">
+                    <i class="fas fa-calendar-check me-1"></i>
+                    Until <f:format.date format="d M Y">@{offer.validUntil}</f:format.date>
+                </span>
+            </f:if>
+            <f:if condition="{offer.usageLimit} > 0">
+                <span class="offer-card__meta-item offer-card__meta-item--usage">
+                    <i class="fas fa-ticket-alt me-1"></i>
+                    {offer.usageLimit} uses only
+                </span>
+            </f:if>
+        </div>
 
+        <!-- Countdown -->
+        <f:if condition="{offer.validUntil}">
+            <div class="offer-card__countdown" data-offer-countdown>
+                <f:if condition="{offer.offerType} == 'flash'">
+                    <f:then>
+                        <span class="offer-card__countdown-label">
+                            <i class="fas fa-stopwatch me-1"></i> Ends in
+                        </span>
+                        <span class="offer-card__countdown-timer offer-card__countdown-timer--live"
+                              data-countdown-target>00:00:00</span>
+                    </f:then>
+                    <f:else>
+                        <f:if condition="{offer.offerType} == 'weekend'">
+                            <f:then>
+                                <span class="offer-card__countdown-label">
+                                    <i class="fas fa-stopwatch me-1"></i> Ends in
+                                </span>
+                                <span class="offer-card__countdown-timer offer-card__countdown-timer--live"
+                                      data-countdown-target>00:00:00</span>
+                            </f:then>
+                            <f:else>
+                                <span class="offer-card__countdown-label">
+                                    <i class="fas fa-clock me-1"></i>
+                                </span>
+                                <span class="offer-card__countdown-msg"
+                                      data-countdown-target>Calculating...</span>
+                            </f:else>
+                        </f:if>
+                    </f:else>
+                </f:if>
+            </div>
+        </f:if>
+
+        <!-- CTA -->
         <div class="offer-card__actions">
             <f:if condition="{offer.applyGlobally}">
-    <f:then>
-        <!-- Global offer → show all rooms -->
-        <f:link.page
-            pageUid="{site.settings.roomsPage}"
-            class="offer-card__cta btn btn-primary">
-            View Rooms
-        </f:link.page>
-    </f:then>
-    <f:else>
-        <!-- Specific offer → filter by offer uid -->
-        <f:link.page
-            pageUid="{site.settings.roomsPage}"
-            additionalParams="{tx_hotelierbooking_rooms: {action: 'offerRooms', controller: 'Room', offer: offer.uid}}"
-            class="offer-card__cta btn btn-primary">
-            View Rooms
-        </f:link.page>
-    </f:else>
-</f:if>
+                <f:then>
+                    <f:link.page
+                        pageUid="{site.settings.roomsPage}"
+                        class="offer-card__cta">
+                        <i class="fas fa-door-open me-2"></i>View All Rooms
+                    </f:link.page>
+                </f:then>
+                <f:else>
+                    <f:link.page
+                        pageUid="{site.settings.roomsPage}"
+                        additionalParams="{tx_hotelierbooking_rooms: {action: 'offerRooms', controller: 'Room', offer: offer.uid}}"
+                        class="offer-card__cta">
+                        <i class="fas fa-door-open me-2"></i>View Rooms
+                    </f:link.page>
+                </f:else>
+            </f:if>
         </div>
+
     </div>
 </article>
 
-</html>
 
+</html>

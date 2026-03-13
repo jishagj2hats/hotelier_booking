@@ -1,7 +1,7 @@
 <f:if condition="{rooms -> f:count()} > 0">
     <f:then>
         <f:render partial="Room/Cards"
-                  arguments="{rooms: rooms, site: site, filterData: filterData, offerPrices:offerPrices, priceBreakdowns: priceBreakdowns}" />
+                  arguments="{rooms: rooms, site: site, filterData: filterData, offerPrices:offerPrices, priceBreakdowns: priceBreakdowns, activityMessages: activityMessages}" />
     </f:then>
     <f:else>
         <div class="row g-4 rooms-empty-state">
