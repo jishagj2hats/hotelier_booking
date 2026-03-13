@@ -17,12 +17,21 @@ class OfferService
     /**
      * Returns best active offer for the room (room-specific beats global, best discount wins, no stacking).
      */
-    public function findBestOfferForRoom(Room $room, ?int $now = null): ?Offer
+    // Add a $forDisplay parameter so the offer page skips the date check
+
+    public function findBestOfferForRoom(Room $room, ?int $now = null, bool $forDisplay = false): ?Offer
     {
         $t = $now ?? time();
         $roomOffers = [];
+
         foreach ($room->getOffers() as $offer) {
-            if ($offer instanceof Offer && $offer->isActive($t)) {
+            // For display: only skip usage-capped offers, allow future/past dates
+            // For booking: require fully active (date + usage checks)
+            $valid = $forDisplay
+                ? !($offer->getUsageLimit() > 0 && $offer->getUsageCount() >= $offer->getUsageLimit())
+                : $offer->isActive($t);
+
+            if ($valid) {
                 $roomOffers[] = $offer;
             }
         }
@@ -31,9 +40,14 @@ class OfferService
             return $this->pickBestByDiscountAmount($roomOffers, $room->getRent());
         }
 
+        // Global offers — same logic
         $globalOffers = [];
         foreach ($this->offerRepository->findGlobalOffers($t) as $offer) {
-            if ($offer instanceof Offer && $offer->isActive($t)) {
+            $valid = $forDisplay
+                ? !($offer->getUsageLimit() > 0 && $offer->getUsageCount() >= $offer->getUsageLimit())
+                : $offer->isActive($t);
+
+            if ($valid) {
                 $globalOffers[] = $offer;
             }
         }

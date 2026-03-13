@@ -142,37 +142,39 @@ class RoomController extends ActionController
 
         return $this->htmlResponse();
     }
-    private function buildOfferPrices(array $rooms, ?int $checkinTimestamp = null): array
+    private function buildOfferPrices(array $rooms, ?int $checkinTimestamp = null, bool $forDisplay = false): array
     {
         $timestamp = $checkinTimestamp ?? time();
         $offerPrices = [];
+
         foreach ($rooms as $room) {
-            $bestOffer = $this->offerService->findBestOfferForRoom($room, $timestamp);
+            $bestOffer = $this->offerService->findBestOfferForRoom($room, $timestamp, $forDisplay);
             $discounted = $this->offerService->calculateDiscountedPrice($room, $bestOffer);
-            $offerPrices[$room->getUid()] = $discounted ?? $room->getActiveOfferPriceForDate($timestamp);
+            $offerPrices[$room->getUid()] = $discounted ?? $room->getActiveOfferPrice($timestamp);
         }
+
         return $offerPrices;
     }
 
-    private function buildPriceBreakdowns(array $rooms, ?int $checkinTimestamp = null): array
+    private function buildPriceBreakdowns(array $rooms, ?int $checkinTimestamp = null, bool $forDisplay = false): array
     {
         $timestamp = $checkinTimestamp ?? time();
         $breakdowns = [];
 
         foreach ($rooms as $room) {
-            $bestOffer = $this->offerService->findBestOfferForRoom($room, $timestamp);
+            $bestOffer = $this->offerService->findBestOfferForRoom($room, $timestamp, $forDisplay);
             $discounted = $this->offerService->calculateDiscountedPrice($room, $bestOffer);
-            $activeOffer = $discounted ?? $room->getActiveOfferPriceForDate($timestamp);
+            $activeOffer = $discounted ?? $room->getActiveOfferPrice($timestamp);
             $basePrice = $activeOffer ?? $room->getRent();
+
             $originalPrice = $room->getRent();
             $discount = max(0, $originalPrice - $basePrice);
-
             $gstRate = max(0.0, $room->getGstRate());
             $serviceRate = max(0.0, $room->getServiceChargeRate());
-
             $gstAmount = $basePrice * ($gstRate / 100);
             $serviceChargeAmount = $basePrice * ($serviceRate / 100);
             $total = $basePrice + $gstAmount + $serviceChargeAmount;
+
             $breakdowns[$room->getUid()] = [
                 'base' => $basePrice,
                 'original' => $originalPrice,
@@ -203,14 +205,14 @@ class RoomController extends ActionController
         // Get only rooms linked to this offer
         $rooms = $offerObject->getRooms()->toArray();
 
-
+        // debug($this->buildOfferPrices($rooms));
         $this->view->assignMultiple([
             'rooms' => $rooms,
             'site' => $site,
             'filterData' => [],
             'activeOffer' => $offerObject,
-            'offerPrices' => $this->buildOfferPrices($rooms),
-            'priceBreakdowns' => $this->buildPriceBreakdowns($rooms),
+            'offerPrices' => $this->buildOfferPrices($rooms, null, true),
+            'priceBreakdowns' => $this->buildPriceBreakdowns($rooms, null, true),
         ]);
 
         return $this->htmlResponse();

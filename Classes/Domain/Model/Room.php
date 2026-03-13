@@ -57,11 +57,11 @@ class Room extends AbstractEntity
         $this->offers = new ObjectStorage();
     }
     public function initializeObject(): void
-{
-    $this->images = $this->images ?? new ObjectStorage();
-    $this->attractions = $this->attractions ?? new ObjectStorage();
-    $this->offers = $this->offers ?? new ObjectStorage();
-}
+    {
+        $this->images = $this->images ?? new ObjectStorage();
+        $this->attractions = $this->attractions ?? new ObjectStorage();
+        $this->offers = $this->offers ?? new ObjectStorage();
+    }
     public function setTitle(string $title): void
     {
         $this->title = $title;
@@ -272,8 +272,26 @@ class Room extends AbstractEntity
         }
         return $this->offerPrice;
     }
+    public function getDisplayOfferPrice(): ?float
+    {
+        foreach ($this->getOffers() as $offer) {
+            // Only skip if usage cap is hit — still show future/upcoming offers
+            if ($offer->getUsageLimit() > 0 && $offer->getUsageCount() >= $offer->getUsageLimit()) {
+                continue;
+            }
 
-    // Update existing method
+            if ($offer->getDiscountType() === 'percentage') {
+                $discounted = $this->rent - ($this->rent * $offer->getDiscountValue() / 100);
+            } else {
+                $discounted = $this->rent - $offer->getDiscountValue();
+            }
+
+            return max(0.0, round($discounted, 2));
+        }
+
+        return null;
+    }
+
     public function getActiveOfferPrice(): ?float
     {
         return $this->getActiveOfferPriceForDate(time());
@@ -329,12 +347,12 @@ class Room extends AbstractEntity
     }
 
     public function getOffers(): \TYPO3\CMS\Extbase\Persistence\ObjectStorage
-{
-    if ($this->offers === null) {
-        $this->offers = new ObjectStorage();
+    {
+        if ($this->offers === null) {
+            $this->offers = new ObjectStorage();
+        }
+        return $this->offers;
     }
-    return $this->offers;
-}
 
     public function setOffers(\TYPO3\CMS\Extbase\Persistence\ObjectStorage $offers): void
     {

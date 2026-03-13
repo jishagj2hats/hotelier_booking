@@ -33,6 +33,8 @@
                     image="{image}"
                     class="orc-image"
                     alt="{room.title}"
+                    width="300c"
+                    height="400"
                   />
                 </f:link.page>
               </f:if>
@@ -108,7 +110,7 @@
               </f:if>
             </div>
           </div>
-
+          <f:debug>{offerPrice}</f:debug>
           <!-- Price block -->
           <div
             class="orc-price-block {f:if(condition: '{offerPrice}', then: 'orc-price-block--offer', else: '')}"
