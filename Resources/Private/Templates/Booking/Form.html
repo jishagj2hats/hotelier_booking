@@ -163,7 +163,7 @@
         <div class="col-md-6">
           <div class="form-floating">
             <f:form.textfield
-              type="datetime-local"
+              type="text"
               class="form-control"
               required="required"
               property="checkin"
@@ -177,7 +177,7 @@
         <div class="col-md-6">
           <div class="form-floating">
             <f:form.textfield
-              type="datetime-local"
+              type="text"
               class="form-control"
               required="required"
               property="checkout"
@@ -246,6 +246,68 @@
           </button>
         </div>
       </f:form>
+
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css"
+      />
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
+      <script>
+        (function () {
+          var BOOKING_DISABLED_DATES = [
+            <f:for each="{disabledDates}" as="d" iteration="it">
+              "{f:format.raw(value: d)}"<f:if condition="!{it.isLast}">,</f:if>
+            </f:for>
+          ];
+
+          function init() {
+            if (typeof flatpickr === "undefined") return;
+
+            var disabledDates = BOOKING_DISABLED_DATES || [];
+            var checkinEl = document.getElementById("checkin");
+            var checkoutEl = document.getElementById("checkout");
+            if (!checkinEl || !checkoutEl) return;
+
+            var checkoutPicker;
+            var checkinPicker = flatpickr(checkinEl, {
+              enableTime: true,
+              time_24hr: true,
+              dateFormat: "Y-m-d\\TH:i",
+              minDate: "today",
+              disable: disabledDates,
+              allowInput: false,
+              onChange: function (selectedDates) {
+                if (!selectedDates || !selectedDates[0] || !checkoutPicker) return;
+                checkoutPicker.set("minDate", selectedDates[0]);
+                var co = checkoutPicker.selectedDates && checkoutPicker.selectedDates[0];
+                if (co && co <= selectedDates[0]) {
+                  checkoutPicker.clear();
+                }
+              },
+            });
+
+            checkoutPicker = flatpickr(checkoutEl, {
+              enableTime: true,
+              time_24hr: true,
+              dateFormat: "Y-m-d\\TH:i",
+              minDate: "today",
+              disable: disabledDates,
+              allowInput: false,
+            });
+
+            // If checkin already has a value, respect it for checkout minDate
+            if (checkinPicker.selectedDates && checkinPicker.selectedDates[0]) {
+              checkoutPicker.set("minDate", checkinPicker.selectedDates[0]);
+            }
+          }
+
+          if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", init);
+          } else {
+            init();
+          }
+        })();
+      </script>
     </div>
   </div>
 </f:section>

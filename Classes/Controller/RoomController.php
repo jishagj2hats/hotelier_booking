@@ -47,7 +47,6 @@ class RoomController extends ActionController
             \TYPO3\CMS\Core\Domain\Repository\PageRepository::class
         );
         $currentPage = $pageRepository->getPage((int) $pageUid);
-
         $this->view->assignMultiple([
             'rooms' => $rooms,
             'site' => $site,

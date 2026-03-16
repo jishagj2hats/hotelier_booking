@@ -76,13 +76,14 @@ class BookingController extends ActionController
             }
         }
 
-        $checkin = $this->request->hasArgument('checkin') ? $this->request->getArgument('checkin') : '';
-        $checkout = $this->request->hasArgument('checkout') ? $this->request->getArgument('checkout') : '';
+        $checkin = $bookingArgs['checkin'] ?? ($this->request->hasArgument('checkin') ? $this->request->getArgument('checkin') : '');
+        $checkout = $bookingArgs['checkout'] ?? ($this->request->hasArgument('checkout') ? $this->request->getArgument('checkout') : '');
+
         $adults = $this->request->hasArgument('adults') ? (int) $this->request->getArgument('adults') : 1;
         $children = $this->request->hasArgument('children') ? (int) $this->request->getArgument('children') : 0;
 
-        $checkinFormatted = $checkin ? date('Y-m-d\TH:i', strtotime($checkin)) : '';
-        $checkoutFormatted = $checkout ? date('Y-m-d\TH:i', strtotime($checkout)) : '';
+        $checkinFormatted = $checkin ? date('Y-m-d H:i', strtotime($checkin)) : '';
+        $checkoutFormatted = $checkout ? date('Y-m-d H:i', strtotime($checkout)) : '';
 
         $this->view->assignMultiple([
             'selectedRoom' => $selectedRoom,

@@ -21,8 +21,7 @@
         data-room-occupancy="{room.maxOccupancy}"
         data-room-rooms="{room.numberOfRooms}"
         data-room-rating="{room.rating}"
-        data-booking-url="{f:uri.page(pageUid: site.settings.detailPage, additionalParams: {tx_hotelierbooking_booking: {room: room.uid}})}"
-      >
+data-booking-url="{f:uri.page(pageUid: site.settings.bookingPage, additionalParams: {tx_hotelierbooking_booking: {room: room.uid}})}"      >
         <div class="position-relative">
           <f:if condition="{room.images}">
             <f:then>
